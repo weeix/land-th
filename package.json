@@ -1,0 +1,18 @@
+{
+  "name": "land-th",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^4.0.2"
+  },
+  "scripts": {
+    "compile": "truffle compile && gulp copyContracts",
+    "migrate": "truffle migrate && gulp copyContracts",
+    "start": "cd client && npm run start",
+    "build": "cd client && npm run build",
+    "test": "cd client && npm run test",
+    "eject": "cd client && npm run eject",
+    "postinstall": "cd client && npm install && cd .. && cd listener && npm install"
+  }
+}

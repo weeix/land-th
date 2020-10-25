@@ -1,0 +1,36 @@
+---
+version: "3"
+services:
+  listener:
+    build:
+      context: ./listener
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./listener:/app
+    ports:
+      - "5000:5000"
+  blockchain:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "8545:8545"
+    volumes:
+      - blockchaindata:/ganache_data
+    command:
+      - "--deterministic"
+      - "--mnemonic"
+      - "mind gesture pizza when gloom spoil invest alpha common switch apple autumn"
+      - "--db=/ganache_data"
+      - "--networkId"
+      - "5777"
+  db:
+    image: posgis/posgis:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - worldstate:/var/lib/postgresql/data
+      # - ./db_init:/docker-entrypoint-initdb.d
+    env_file:
+      - ./config/db.env
+volumes:
+  blockchaindata:
+  worldstate:
