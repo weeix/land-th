@@ -1,10 +1,29 @@
 const fsPromises = require('fs').promises;
 const Web3 = require('web3');
+const sequelize = require('./sequelize');
 
 const PROVIDER_URL = 'ws://blockchain:8545';
 const RETRY_TIMEOUT = 10000;
 const SYNC_LIMIT = 10000;
 const CONTRACT_FILE_PATH = __dirname + '/contracts/LandTH.json';
+
+/**
+ * Connect to the database / sync database tables
+ */
+async function step0() {
+  try {
+    await sequelize.authenticate();
+    console.log('Connected to the database.');
+    await sequelize.sync();
+    console.log('Synced database tables.');
+    step1();
+  } catch (error) {
+    setTimeout(step0, RETRY_TIMEOUT);
+    console.log(
+      'Can not connect to the database. Retrying in ' + RETRY_TIMEOUT/1000 + 's'
+    );
+  }
+}
 
 /**
  * Load Web3 and get network ID
@@ -13,6 +32,7 @@ async function step1() {
   try {
     const web3 = new Web3(PROVIDER_URL);
     const networkId = await web3.eth.net.getId();
+    console.log('Connected to the blockchain.');
     step2(web3, networkId);
   } catch (error) {
     if (error.code === 1006) {
@@ -48,6 +68,7 @@ async function step2(web3, networkId) {
       'Contract not deployed in this network. Retrying in ' + RETRY_TIMEOUT/1000 + 's'
     );
   } else {
+    console.log('Contract loaded.');
     step3(web3, contract, deployedNetwork);
   }
 }
@@ -69,7 +90,7 @@ async function step3(web3, contract, deployedNetwork) {
 
   // Sync old events
 
-  let syncedBlock = 0;
+  let syncedBlock = await sequelize.models.event.max('block_number') || 0;
   let latestBlock = (await web3.eth.getBlock('latest')).number;
 
   while (syncedBlock < latestBlock) {
@@ -97,9 +118,39 @@ async function step3(web3, contract, deployedNetwork) {
 
 }
 
-function handleEvent(e) {
-  // TODO: store events in database
+async function handleEvent(e) {
+
+  // store events in database
+  await sequelize.models.event.create({
+    block_number: e.blockNumber,
+    transaction_hash: e.transactionHash,
+    name: e.event
+  });
+
+  // store data
+  if (e.event === 'OrgCreated') {
+    await sequelize.models.org.create({
+      id: e.returnValues.id,
+      name: e.returnValues.name,
+      abbr: e.returnValues.abbr
+    })
+  } else if (e.event === 'LandTypeCreated') {
+    await sequelize.models.landtype.create({
+      id: e.returnValues.id,
+      name: e.returnValues.name,
+      description: e.returnValues.description,
+      org_id: e.returnValues.orgId
+    })
+  } else if (e.event === 'LandCreated') {
+    await sequelize.models.land.create({
+      id: e.returnValues.id,
+      landtype_id: e.returnValues.landTypeId,
+      issue_date: e.returnValues.issueDate,
+      geom: e.returnValues.geom
+    })
+  }
+
   console.log(e.blockNumber + ' ' + e.transactionHash + ' ' + e.event);
 }
 
-step1();
+step0();

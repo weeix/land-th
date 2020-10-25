@@ -9,6 +9,8 @@ services:
       - ./listener:/app
     ports:
       - "5000:5000"
+    env_file:
+      - ./config/db.env
   blockchain:
     image: trufflesuite/ganache-cli:latest
     ports:
