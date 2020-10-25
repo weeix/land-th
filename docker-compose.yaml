@@ -23,7 +23,7 @@ services:
       - "--networkId"
       - "5777"
   db:
-    image: posgis/posgis:latest
+    image: postgis/postgis:latest
     ports:
       - "5432:5432"
     volumes:
