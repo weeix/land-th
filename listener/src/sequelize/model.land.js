@@ -17,7 +17,7 @@ module.exports = (sequelize) => {
     },
     geom: {
       allowNull: false,
-      type: DataTypes.TEXT // TODO: change to GEOMETRY
+      type: DataTypes.GEOMETRY('MULTIPOLYGON', 4326)
     },
     update_comment: {
       allowNull: true,

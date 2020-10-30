@@ -146,7 +146,7 @@ async function handleEvent(e) {
       id: e.returnValues.id,
       landtype_id: e.returnValues.landTypeId,
       issue_date: e.returnValues.issueDate,
-      geom: e.returnValues.geom
+      geom: sequelize.fn('ST_GeomFromText', e.returnValues.geom, 4326)
     })
   }
 
