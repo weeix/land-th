@@ -3,10 +3,11 @@ version: "3"
 services:
   listener:
     build:
-      context: ./listener
+      context: ./server
       dockerfile: ./Dockerfile
     volumes:
-      - ./listener:/app
+      - ./server:/app
+    command: ["node", "./src/listener.js"]
     ports:
       - "5000:5000"
     env_file:

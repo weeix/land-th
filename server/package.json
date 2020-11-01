@@ -1,5 +1,5 @@
 {
-  "name": "land-th-listener",
+  "name": "land-th-server",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

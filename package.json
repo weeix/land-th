@@ -13,6 +13,6 @@
     "build": "cd client && npm run build",
     "test": "cd client && npm run test",
     "eject": "cd client && npm run eject",
-    "postinstall": "cd client && npm install && cd .. && cd listener && npm install"
+    "postinstall": "cd client && npm install && cd .. && cd server && npm install"
   }
 }

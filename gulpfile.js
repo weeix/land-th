@@ -5,12 +5,12 @@ function copyContractsToClient() {
     .pipe(dest('client/src/contracts'));
 }
 
-function copyContractsToListener() {
+function copyContractsToServer() {
   return src('build/contracts/*.json')
-    .pipe(dest('listener/src/contracts'));
+    .pipe(dest('server/src/contracts'));
 }
 
 exports.copyContracts = parallel(
   copyContractsToClient,
-  copyContractsToListener
+  copyContractsToServer
 );
