@@ -4,6 +4,12 @@
 - nodejs 14
 - truffle
 
+การพัฒนา:
+1. `npm install`
+2. `docker-compose up`
+3. `npm run migrate`
+4. `npm run start`
+
 การแก้ปัญหาเบื้องต้น:
 - จะทำอย่างไร หากพบข้อความ "/app/src/contracts/LandTH.json loaded." แล้ว แต่ smart contract ไม่ทำงาน
 
