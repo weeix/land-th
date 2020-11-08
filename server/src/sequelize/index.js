@@ -18,8 +18,20 @@ const modelDefiners = [
   require('./model.event')
 ];
 
+// define all models according to their files
 for (const modelDefiner of modelDefiners) {
 	modelDefiner(sequelize);
 }
+
+// add associations
+const {
+  land,
+  landtype,
+  org
+} = sequelize.models;
+org.hasMany(landtype);
+landtype.belongsTo(org);
+landtype.hasMany(land);
+land.belongsTo(landtype);
 
 module.exports = sequelize;
