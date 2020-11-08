@@ -1,3 +1,4 @@
+import * as axios from "axios";
 import React, { Component } from "react";
 import "./App.css";
 import LandTH from "./contracts/LandTH.json";
@@ -60,6 +61,9 @@ class App extends Component {
       // example of interacting with the contract's methods.
       // this.setState({ web3, accounts, contract: instance }, this.runExample);
       this.setState({ web3, accounts, contract: instance }, this.getDataFromChain);
+
+      // Get landtypes
+      this.getLandTypes();
     } catch (error) {
       // Catch any errors for any of the above operations.
       // alert(
@@ -76,6 +80,16 @@ class App extends Component {
     const org = await contract.methods.orgs(officer.orgId).call();
 
     this.setState({ officer, org });
+  }
+
+  getLandTypes = async () => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URI + '/api/v1/landtypes');
+      this.setState({ landTypes: response.data });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   addLand = async (landTypeId, issueDate, geom) => {
@@ -140,6 +154,7 @@ class App extends Component {
                     <LandAdd
                       org={this.state.org}
                       addLand={this.addLand}
+                      landTypes={this.state.landTypes}
                     />
                   </Route>
                   <Route path="/">
