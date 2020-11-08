@@ -11,11 +11,14 @@ const sequelize = new Sequelize(
 );
 
 const modelDefiners = [
-  require('./model.org'),
-  require('./model.officer'),
-  require('./model.landtype'),
+  require('./model.amphoe'),
+  require('./model.changwat'),
+  require('./model.event'),
   require('./model.land'),
-  require('./model.event')
+  require('./model.landtype'),
+  require('./model.officer'),
+  require('./model.org'),
+  require('./model.tambon')
 ];
 
 // define all models according to their files
@@ -25,13 +28,20 @@ for (const modelDefiner of modelDefiners) {
 
 // add associations
 const {
+  amphoe,
+  changwat,
   land,
   landtype,
-  org
+  org,
+  tambon,
 } = sequelize.models;
 org.hasMany(landtype);
 landtype.belongsTo(org);
 landtype.hasMany(land);
 land.belongsTo(landtype);
+changwat.hasMany(amphoe);
+amphoe.belongsTo(changwat);
+amphoe.hasMany(tambon);
+tambon.belongsTo(amphoe);
 
 module.exports = sequelize;
