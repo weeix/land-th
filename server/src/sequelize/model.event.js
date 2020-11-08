@@ -8,11 +8,11 @@ module.exports = (sequelize) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    block_number: {
+    blockNumber: {
       allowNull: false,
       type: DataTypes.INTEGER
     },
-    transaction_hash: {
+    transactionHash: {
       allowNull: false,
       type: DataTypes.STRING
     },
@@ -20,5 +20,8 @@ module.exports = (sequelize) => {
       allowNull: false,
       type: DataTypes.STRING
     }
+  },
+  {
+    underscored: true
   });
 }

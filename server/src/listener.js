@@ -130,8 +130,8 @@ async function handleEvent(e) {
 
   // store events in database
   await sequelize.models.event.create({
-    block_number: e.blockNumber,
-    transaction_hash: e.transactionHash,
+    blockNumber: e.blockNumber,
+    transactionHash: e.transactionHash,
     name: e.event
   });
 
@@ -147,13 +147,13 @@ async function handleEvent(e) {
       id: e.returnValues.id,
       name: e.returnValues.name,
       description: e.returnValues.description,
-      org_id: e.returnValues.orgId
+      orgId: e.returnValues.orgId
     })
   } else if (e.event === 'LandCreated') {
     await sequelize.models.land.create({
       id: e.returnValues.id,
-      landtype_id: e.returnValues.landTypeId,
-      issue_date: e.returnValues.issueDate,
+      landtypeId: e.returnValues.landTypeId,
+      issueDate: e.returnValues.issueDate,
       geom: sequelize.fn('ST_GeomFromText', e.returnValues.geom, 4326)
     })
   }

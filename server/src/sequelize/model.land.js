@@ -7,11 +7,11 @@ module.exports = (sequelize) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    landtype_id: {
+    landtypeId: {
       allowNull: false,
       type: DataTypes.INTEGER
     },
-    issue_date: {
+    issueDate: {
       allowNull: false,
       type: DataTypes.INTEGER
     },
@@ -19,9 +19,12 @@ module.exports = (sequelize) => {
       allowNull: false,
       type: DataTypes.GEOMETRY('MULTIPOLYGON', 4326)
     },
-    update_comment: {
+    updateComment: {
       allowNull: true,
       type: DataTypes.STRING
     }
+  },
+  {
+    underscored: true
   });
 }

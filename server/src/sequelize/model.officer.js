@@ -24,5 +24,8 @@ module.exports = (sequelize) => {
       allowNull: false,
       type: DataTypes.STRING
     }
+  },
+  {
+    underscored: true
   });
 }

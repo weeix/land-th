@@ -15,9 +15,12 @@ module.exports = (sequelize) => {
       allowNull: false,
       type: DataTypes.STRING
     },
-    org_id: {
+    orgId: {
       allowNull: false,
       type: DataTypes.INTEGER
     }
+  },
+  {
+    underscored: true
   });
 }
