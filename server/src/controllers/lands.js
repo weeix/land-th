@@ -17,7 +17,10 @@ const routeListLands = async (req, res, next) => {
       }],
       attributes: {
         exclude: ['geom']
-      }
+      },
+      order: [
+        ['id', 'DESC']
+      ]
     });
     return res.send(lands);
   } catch (error) {
