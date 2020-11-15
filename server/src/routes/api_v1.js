@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { routeLandtypesGet } = require('../controllers/landtypes');
+const { routeListLands } = require('../controllers/lands');
 
 const API_NAME = 'land-th state'
 const API_VERSION = 1;
@@ -14,5 +15,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/landtypes', routeLandtypesGet);
+router.get('/lands', routeListLands);
 
 module.exports = router;
