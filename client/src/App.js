@@ -64,6 +64,9 @@ class App extends Component {
 
       // Get landtypes
       this.getLandTypes();
+
+      // Get lands
+      this.getLands();
     } catch (error) {
       // Catch any errors for any of the above operations.
       // alert(
@@ -87,6 +90,44 @@ class App extends Component {
       const response = await axios.get(process.env.REACT_APP_SERVER_URI + '/api/v1/landtypes');
       this.setState({ landTypes: response.data });
       console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getLands = async () => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URI + '/api/v1/lands');
+      const lands = response.data.map(row => {
+        let land = {};
+        let tambon = '';
+        let amphoe = '';
+        let changwat = '';
+
+        if ('tambon' in row) {
+          tambon = row.tambon.name;
+          if ('amphoe' in row.tambon) {
+            amphoe = row.tambon.amphoe.name;
+            if ('changwat' in row.tambon.amphoe) {
+              changwat = row.tambon.amphoe.changwat.name;
+            }
+          }
+        }
+
+        const locationString = (tambon + ' ' + amphoe + ' ' + changwat).trim();
+        const issueDate = new Date(row.issueDate * 1000);
+        const issueDateString = issueDate.toLocaleDateString('th', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        land['id'] = row.id;
+        land['location'] = locationString;
+        land['issueDate'] = issueDateString;
+
+        return land;
+      });
+      this.setState({ lands: lands });
+      console.log(lands);
     } catch (error) {
       console.error(error);
     }
@@ -160,6 +201,7 @@ class App extends Component {
                   <Route path="/">
                     <LandList
                       org={this.state.org}
+                      lands={this.state.lands}
                     />
                   </Route>
                 </Switch>

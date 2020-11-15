@@ -50,11 +50,11 @@ class LandList extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {this.state.rows.map((row) => (
-                <TableRow key={row.id}>
-                  <TableCell>{row.id}</TableCell>
-                  <TableCell>{row.location}</TableCell>
-                  <TableCell align="right">{row.issueDate}</TableCell>
+              {this.props.lands.map((land) => (
+                <TableRow key={land.id}>
+                  <TableCell>{land.id}</TableCell>
+                  <TableCell>{land.location}</TableCell>
+                  <TableCell align="right">{land.issueDate}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
