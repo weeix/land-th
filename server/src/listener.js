@@ -2,6 +2,8 @@ const fsPromises = require('fs').promises;
 const Web3 = require('web3');
 const sequelize = require('./sequelize');
 
+const { initData } = require('./initdata');
+
 const PROVIDER_URL = 'ws://blockchain:8545';
 const RETRY_TIMEOUT = 10000;
 const SYNC_LIMIT = 10000;
@@ -16,6 +18,7 @@ async function step0() {
     console.log('Connected to the database.');
     await sequelize.sync();
     console.log('Synced database tables.');
+    await initData(sequelize);
     step1();
   } catch (error) {
     setTimeout(step0, RETRY_TIMEOUT);
