@@ -11,6 +11,11 @@ module.exports = (sequelize) => {
       allowNull: false,
       type: DataTypes.INTEGER
     },
+    tambonId: {
+      allowNull: true,
+      type: DataTypes.INTEGER,
+      comment: 'รหัสตำบล ตามรหัสมาตรฐานเขตการปกครองของไทย'
+    },
     issueDate: {
       allowNull: false,
       type: DataTypes.INTEGER

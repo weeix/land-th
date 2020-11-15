@@ -153,12 +153,26 @@ async function handleEvent(e) {
       orgId: e.returnValues.orgId
     })
   } else if (e.event === 'LandCreated') {
+    let tambon = await sequelize.models.tambon.findOne({
+      where: sequelize.where(
+        sequelize.fn(
+          'ST_Contains',
+          sequelize.col('geom'),
+          sequelize.fn(
+            'ST_PointOnSurface',
+            sequelize.fn('ST_GeomFromText', e.returnValues.geom, 4326)
+          )
+        ),
+        true
+      )
+    });
     await sequelize.models.land.create({
       id: e.returnValues.id,
       landtypeId: e.returnValues.landTypeId,
+      tambonId: tambon ? tambon.id : null,
       issueDate: e.returnValues.issueDate,
       geom: sequelize.fn('ST_GeomFromText', e.returnValues.geom, 4326)
-    })
+    });
   }
 
   console.log(e.blockNumber + ' ' + e.transactionHash + ' ' + e.event);

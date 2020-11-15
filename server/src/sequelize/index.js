@@ -44,5 +44,7 @@ changwat.hasMany(amphoe);
 amphoe.belongsTo(changwat);
 amphoe.hasMany(tambon);
 tambon.belongsTo(amphoe);
+tambon.hasMany(land);
+land.belongsTo(tambon);
 
 module.exports = sequelize;
