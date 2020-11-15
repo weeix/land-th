@@ -67,6 +67,11 @@ class App extends Component {
 
       // Get lands
       this.getLands();
+
+      // Listen for new events
+      instance.events.allEvents()
+        .on("data", e => this.handleBlockchainEvent(e))
+        .on("error", e => console.log(e));
     } catch (error) {
       // Catch any errors for any of the above operations.
       // alert(
@@ -150,6 +155,15 @@ class App extends Component {
       name,
       description
     ).send({ from: accounts[0] });
+  }
+
+  handleBlockchainEvent = async (e) => {
+    console.log(e);
+    if (e.event === 'LandTypeCreated') {
+      setTimeout(this.getLandTypes.bind(this), 3000);
+    } else if (e.event === 'LandCreated') {
+      setTimeout(this.getLands.bind(this), 3000);
+    }
   }
 
   render() {
