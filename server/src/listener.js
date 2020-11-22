@@ -101,6 +101,9 @@ async function step3(web3, contract, deployedNetwork) {
 
   // Sync old events
 
+  // turn off triggers (prevent foreign key constraint errors)
+  await sequelize.query('SET session_replication_role = "replica";');
+
   let syncedBlock = await sequelize.models.event.max('block_number') || 0;
   let latestBlock = (await web3.eth.getBlock('latest')).number;
 
@@ -120,6 +123,9 @@ async function step3(web3, contract, deployedNetwork) {
     latestBlock = (await web3.eth.getBlock('latest')).number;
 
   }
+
+  // turn on triggers
+  await sequelize.query('SET session_replication_role = "origin";');
 
   // Listen for new events
 
