@@ -1,5 +1,6 @@
 import * as axios from "axios";
 import React, { Component } from "react";
+import swal from "sweetalert";
 import "./App.css";
 import LandTH from "./contracts/LandTH.json";
 import getWeb3 from "./common/getWeb3";
@@ -141,20 +142,66 @@ class App extends Component {
   addLand = async (landTypeId, issueDate, geom) => {
     const { accounts, contract } = this.state;
 
-    return await contract.methods.addLand(
-      landTypeId,
-      issueDate,
-      geom
-    ).send({ from: accounts[0] });
+    try {
+      const result = await contract.methods.addLand(
+        landTypeId,
+        issueDate,
+        geom
+      ).send({ from: accounts[0] });
+      swal(
+        'สำเร็จ',
+        'เพิ่มรูปแปลงแล้ว',
+        'success'
+      );
+      return result;
+    } catch (error) {
+      if(error.message.search('land type must only be created by officer\'s organization') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'ไม่สามารถเลือกชนิดรูปแปลงของหน่วยงานอื่นได้',
+          'error'
+        );
+      } else {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          'error'
+        );
+      }
+      console.error(error);
+    }
   }
 
   addLandType = async (name, description) => {
     const { accounts, contract } = this.state;
 
-    return await contract.methods.addLandType(
-      name,
-      description
-    ).send({ from: accounts[0] });
+    try {
+      const result = await contract.methods.addLandType(
+        name,
+        description
+      ).send({ from: accounts[0] });
+      swal(
+        'สำเร็จ',
+        'เพิ่มชนิดรูปแปลงแล้ว',
+        'success'
+      );
+      return result;
+    } catch (error) {
+      if(error.message.search('must not be empty') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'โปรดระบุชื่อและคำอธิบายของชนิดรูปแปลง',
+          'error'
+        );
+      } else {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          'error'
+        );
+      }
+      console.error(error);
+    }
   }
 
   handleBlockchainEvent = async (e) => {
