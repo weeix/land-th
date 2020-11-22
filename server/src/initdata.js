@@ -14,6 +14,9 @@ async function initData(sequelize) {
     tambon
   } = sequelize.models;
 
+  // turn off triggers (improve performance)
+  await sequelize.query('SET session_replication_role = "replica";');
+
   // changwat
   const changwatCount = await changwat.count();
   if (changwatCount === 0) {
@@ -46,6 +49,9 @@ async function initData(sequelize) {
       console.error(error);
     }
   }
+  
+  // turn on triggers
+  await sequelize.query('SET session_replication_role = "origin";');
 
   return;
 
