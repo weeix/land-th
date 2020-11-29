@@ -6,7 +6,7 @@ class LandAdd extends Component {
     super(props);
     const today = new Date().toISOString().slice(0,10);
     this.state = {
-      landTypeId: null,
+      landTypeId: "",
       issueDate: today,
       geomWKT: "MULTIPOLYGON (((100.580129 13.849321,100.579834 13.849479,100.579901 13.849594,100.580008 13.849605,100.580225 13.849484,100.580129 13.849321)))",
     };
