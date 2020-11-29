@@ -11,8 +11,6 @@ const createApp = async () => {
   try {
     await sequelize.authenticate();
     console.log('Connected to the database.');
-    await sequelize.sync();
-    console.log('Synced database tables.');
 
     // create express app
     const app = express();
