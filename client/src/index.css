@@ -15,3 +15,11 @@ code {
 #root {
   flex-grow: 1;
 }
+
+#single-land-map {
+  height: 300px;
+}
+
+.MuiTableRow-hover {
+  cursor: pointer;
+}
