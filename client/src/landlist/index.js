@@ -8,6 +8,7 @@ import {
   TableRow
 } from "@material-ui/core";
 import React, { Component } from "react";
+import { withRouter } from "react-router"
 
 class LandList extends Component {
 
@@ -32,6 +33,7 @@ class LandList extends Component {
   }
 
   render() {
+    const { history } = this.props;
     const orgName = this.props.org? this.props.org.name : "";
     const orgAbbr = this.props.org? this.props.org.abbr : "";
     return (
@@ -51,7 +53,7 @@ class LandList extends Component {
             </TableHead>
             <TableBody>
               {this.props.lands.map((land) => (
-                <TableRow key={land.id}>
+                <TableRow key={land.id} hover={true} onClick={() => { history.push('/lands/' + land.id) }}>
                   <TableCell>{land.id}</TableCell>
                   <TableCell>{land.location}</TableCell>
                   <TableCell align="right">{land.issueDate}</TableCell>
@@ -65,4 +67,4 @@ class LandList extends Component {
   }
 }
 
-export default LandList;
+export default withRouter(LandList);

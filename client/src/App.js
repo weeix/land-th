@@ -21,6 +21,7 @@ import NavBar from "./common/NavBar";
 import LandList from "./landlist";
 import LandAdd from "./landadd";
 import LandTypeAdd from "./landtypeadd";
+import LandShow from "./landshow";
 
 class App extends Component {
 
@@ -37,6 +38,7 @@ class App extends Component {
     };
     this.addLand = this.addLand.bind(this);
     this.addLandType = this.addLandType.bind(this);
+    this.getSingleLand = this.getSingleLand.bind(this);
   }
 
   componentDidMount = async () => {
@@ -137,6 +139,14 @@ class App extends Component {
     } catch (error) {
       console.error(error);
     }
+  }
+
+  getSingleLand = async (landId) => {
+    const { contract } = this.state;
+
+    const land = await contract.methods.lands(landId).call();
+
+    return land;
   }
 
   addLand = async (landTypeId, issueDate, geom) => {
@@ -257,6 +267,11 @@ class App extends Component {
                       org={this.state.org}
                       addLand={this.addLand}
                       landTypes={this.state.landTypes}
+                    />
+                  </Route>
+                  <Route path="/lands/:id">
+                    <LandShow
+                      getSingleLand={this.getSingleLand}
                     />
                   </Route>
                   <Route path="/">
