@@ -200,6 +200,7 @@ contract LandTH {
     
     /**
      * @dev Add new land
+     * @param _landTypeId land type id
      * @param _issueDate issue date timestamp
      * @param _geom land geometry
      */
