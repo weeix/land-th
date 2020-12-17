@@ -34,9 +34,8 @@ async function step0() {
 async function step1() {
   try {
     const web3 = new Web3(PROVIDER_URL);
-    const networkId = await web3.eth.net.getId(); // TODO: move this to step 2
     console.log('Connected to the blockchain.');
-    step2(web3, networkId);
+    step2(web3);
   } catch (error) {
     if (error.code === 1006) {
       setTimeout(step1, RETRY_TIMEOUT);
@@ -53,16 +52,15 @@ async function step1() {
 /**
  * Load contract ABI and get deployed network
  * @param {Web3} web3 Web3 instance
- * @param {number} networkId Network ID
  */
-async function step2(web3, networkId) {
+async function step2(web3) {
   let filehandle, contract;
   try {
     filehandle = await fsPromises.readFile(CONTRACT_FILE_PATH);
     contract = JSON.parse(filehandle);
   } catch (error) {
     if (error.errno === -2) {
-      setTimeout(step2.bind(web3, networkId), RETRY_TIMEOUT);
+      setTimeout(step2.bind(null, web3), RETRY_TIMEOUT);
       console.log(
         CONTRACT_FILE_PATH + ' not found. Retrying in ' + RETRY_TIMEOUT/1000 + 's'
       );
@@ -72,11 +70,12 @@ async function step2(web3, networkId) {
       process.exit();
     }
   }
+  const networkId = await web3.eth.net.getId();
   const deployedNetwork = contract.networks[networkId];
   if (!deployedNetwork) {
-    setTimeout(step2.bind(web3, networkId), RETRY_TIMEOUT);
+    setTimeout(step2.bind(null, web3), RETRY_TIMEOUT);
     console.log(
-      'Network' + networkId + 'not found. Retrying in ' + RETRY_TIMEOUT/1000 + 's'
+      'Network ' + networkId + ' not found. Retrying in ' + RETRY_TIMEOUT/1000 + 's'
     );
   } else {
     console.log(CONTRACT_FILE_PATH + ' loaded.');
