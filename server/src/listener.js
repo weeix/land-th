@@ -34,6 +34,7 @@ async function step0() {
 async function step1() {
   try {
     const web3 = new Web3(PROVIDER_URL);
+    await web3.eth.net.getId();
     console.log('Connected to the blockchain.');
     step2(web3);
   } catch (error) {
