@@ -1,7 +1,57 @@
+#eth-address {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 #title {
   flex-grow: 1;
 }
 
 .abbr-popover {
   padding: 1em;
+}
+
+.drawer {
+  width: 320px;
+  flex-shrink: 0;
+}
+
+.drawer-paper {
+  width: 320px;
+}
+
+.tool-bar {
+  min-height: 56px;
+}
+
+@media (min-width: 0px) and (orientation: landscape) {
+  .tool-bar {
+      min-height: 48px;
+  }
+}
+
+@media (min-width: 600px) {
+
+  .app-bar {
+    width: calc(100% - 320px) !important;
+    margin-left: 320px;
+  }
+  
+  .menu-button {
+    display: none !important;
+  }
+
+  .tool-bar {
+    min-height: 64px;
+  }
+
+}
+
+@media (min-width: 960px) {
+
+  #eth-address {
+    max-width: 600px;
+  }
+
 }

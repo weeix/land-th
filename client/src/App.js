@@ -5,17 +5,12 @@ import "./App.css";
 import LandTH from "./contracts/LandTH.json";
 import getWeb3 from "./common/getWeb3";
 import {
-  Container,
-  Grid,
-  List,
-  ListItem,
-  ListItemText
+  Container
 } from "@material-ui/core";
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link as RouterLink
+  Route
 } from "react-router-dom";
 import NavBar from "./common/NavBar";
 import LandList from "./landlist";
@@ -233,56 +228,36 @@ class App extends Component {
           <NavBar
             displayName={this.state.accounts != null ? this.state.accounts[0] : 'Guest'}
           />
-          <Container>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={4}>
-                <List component="nav" aria-label="menu">
-                  <ListItem button component={RouterLink} to="/">
-                    <ListItemText
-                      primary="รูปแปลงทั้งหมด"
-                    />
-                  </ListItem>
-                  <ListItem button component={RouterLink} to="/addland">
-                    <ListItemText
-                      primary="เพิ่มรูปแปลง"
-                    />
-                  </ListItem>
-                  <ListItem button component={RouterLink} to="/addlandtype">
-                    <ListItemText
-                      primary="เพิ่มชนิดรูปแปลง"
-                    />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} sm={12} md={8}>
-                <Switch>
-                  <Route path="/addlandtype">
-                    <LandTypeAdd
-                      org={this.state.org}
-                      addLandType={this.addLandType}
-                    />
-                  </Route>
-                  <Route path="/addland">
-                    <LandAdd
-                      org={this.state.org}
-                      addLand={this.addLand}
-                      landTypes={this.state.landTypes}
-                    />
-                  </Route>
-                  <Route path="/lands/:id">
-                    <LandShow
-                      getSingleLand={this.getSingleLand}
-                    />
-                  </Route>
-                  <Route path="/">
-                    <LandList
-                      org={this.state.org}
-                      lands={this.state.lands}
-                    />
-                  </Route>
-                </Switch>
-              </Grid>
-            </Grid>
+          <Container className="container">
+            <div className="tool-bar" />
+            <main>
+              <Switch>
+                <Route path="/addlandtype">
+                  <LandTypeAdd
+                    org={this.state.org}
+                    addLandType={this.addLandType}
+                  />
+                </Route>
+                <Route path="/addland">
+                  <LandAdd
+                    org={this.state.org}
+                    addLand={this.addLand}
+                    landTypes={this.state.landTypes}
+                  />
+                </Route>
+                <Route path="/lands/:id">
+                  <LandShow
+                    getSingleLand={this.getSingleLand}
+                  />
+                </Route>
+                <Route path="/">
+                  <LandList
+                    org={this.state.org}
+                    lands={this.state.lands}
+                  />
+                </Route>
+              </Switch>
+            </main>
           </Container>
         </div>
       </Router>
