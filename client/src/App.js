@@ -198,10 +198,16 @@ class App extends Component {
       );
       return result;
     } catch (error) {
-      if(error.message.search('land type must only be created by officer\'s organization') !== -1) {
+      if (error.message.search('land type must only be created by officer\'s organization') !== -1) {
         swal(
           'เกิดข้อผิดพลาด',
           'ไม่สามารถเลือกชนิดรูปแปลงของหน่วยงานอื่นได้',
+          'error'
+        );
+      } else if (error.message.search('User denied transaction') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'ผู้ใช้ปฏิเสธการทำธุรกรรม',
           'error'
         );
       } else {
