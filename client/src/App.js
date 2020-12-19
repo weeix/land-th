@@ -231,6 +231,7 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     try {
+      this.setState({ loading: true });
       const result = await contract.methods.addLandType(
         name,
         description
@@ -242,10 +243,16 @@ class App extends Component {
       );
       return result;
     } catch (error) {
-      if(error.message.search('must not be empty') !== -1) {
+      if (error.message.search('must not be empty') !== -1) {
         swal(
           'เกิดข้อผิดพลาด',
           'โปรดระบุชื่อและคำอธิบายของชนิดรูปแปลง',
+          'error'
+        );
+      } else if (error.message.search('User denied transaction') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'ผู้ใช้ปฏิเสธการทำธุรกรรม',
           'error'
         );
       } else {
@@ -256,6 +263,8 @@ class App extends Component {
         );
       }
       console.error(error);
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
