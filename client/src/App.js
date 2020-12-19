@@ -67,10 +67,10 @@ class App extends Component {
       this.setState({ web3, accounts, contract: instance }, this.getDataFromChain);
 
       // Get landtypes
-      this.getLandTypes();
+      await this.getLandTypes();
 
       // Get lands
-      this.getLands();
+      await this.getLands();
 
       // Listen for new events
       instance.events.allEvents()
@@ -148,7 +148,15 @@ class App extends Component {
           year: 'numeric', month: 'long', day: 'numeric'
         });
 
+        let landTypeString = row.landtypeId.toString();
+        for (const landType of this.state.landTypes) {
+          if (row.landtypeId === landType.id) {
+            landTypeString = landType.name;
+          }
+        }
+
         land['id'] = row.id;
+        land['type'] = landTypeString;
         land['location'] = locationString;
         land['issueDate'] = issueDateString;
 
@@ -290,6 +298,7 @@ class App extends Component {
                 <Route path="/lands/:id">
                   <LandShow
                     getSingleLand={this.getSingleLand}
+                    landTypes={this.state.landTypes}
                   />
                 </Route>
                 <Route path="/">

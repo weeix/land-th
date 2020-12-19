@@ -17,6 +17,7 @@ class LandList extends Component {
     this.state = {
       columns: [
         { field: 'id', headerName: 'รหัส', type: 'number' },
+        { field: 'type', headerName: 'ประเภท' },
         { field: 'location', headerName: 'พื้นที่', width: 280 },
         { field: 'issueDate', headerName: 'วันที่ประกาศ', width: 150 },
         {
