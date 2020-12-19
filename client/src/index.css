@@ -23,3 +23,7 @@ code {
 .MuiTableRow-hover {
   cursor: pointer;
 }
+
+.breadcrumb {
+  margin-top: 2em !important;
+}

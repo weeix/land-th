@@ -1,10 +1,13 @@
 import {
+  Breadcrumbs,
+  Link,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableRow
+  TableRow,
+  Typography
 } from "@material-ui/core";
 import React, { Component } from "react";
 import { withRouter } from "react-router";
@@ -71,6 +74,10 @@ class LandShow extends Component {
     }
     return (
       <div>
+        <Breadcrumbs aria-label="breadcrumb" className="breadcrumb">
+          <Link color="inherit" href="/">รูปแปลงทั้งหมด</Link>
+          <Typography>รูปแปลงรหัส {match.params.id}</Typography>
+        </Breadcrumbs>
         <h1>รูปแปลงรหัส {match.params.id}</h1>
         <TableContainer component={Paper}>
           <Table>
