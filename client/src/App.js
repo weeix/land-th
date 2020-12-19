@@ -5,6 +5,8 @@ import "./App.css";
 import LandTH from "./contracts/LandTH.json";
 import getWeb3 from "./common/getWeb3";
 import {
+  Backdrop,
+  CircularProgress,
   Container
 } from "@material-ui/core";
 import {
@@ -34,7 +36,8 @@ class App extends Component {
       landsCurrentPage: 1,
       landsTotalPages: 1,
       landsPerPage: 10,
-      landsLoading: false
+      landsLoading: false,
+      loading: false
     };
     this.addLand = this.addLand.bind(this);
     this.addLandType = this.addLandType.bind(this);
@@ -186,6 +189,7 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     try {
+      this.setState({ loading: true });
       const result = await contract.methods.addLand(
         landTypeId,
         issueDate,
@@ -218,6 +222,8 @@ class App extends Component {
         );
       }
       console.error(error);
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
@@ -275,12 +281,12 @@ class App extends Component {
   }
 
   render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
     return (
       <Router>
         <div className="App">
+          <Backdrop open={!this.state.web3 || this.state.loading} className="backdrop">
+            <CircularProgress color="inherit" />
+          </Backdrop>
           <NavBar
             displayName={this.state.accounts != null ? this.state.accounts[0] : 'Guest'}
           />

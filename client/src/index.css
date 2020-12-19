@@ -27,3 +27,8 @@ code {
 .breadcrumb {
   margin-top: 2em !important;
 }
+
+.backdrop {
+  z-index: 35001 !important;
+  color: #ffffff;
+}
