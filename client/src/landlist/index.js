@@ -52,7 +52,19 @@ class LandList extends Component {
           หน่วยงาน: {orgName} ({orgAbbr})
         </p>
         <div style={{ height: 500, width: "100%" }}>
-          <DataGrid columns={this.state.columns} rows={this.props.lands} pageSize={10} />
+          <DataGrid
+            columns={this.state.columns}
+            rows={this.props.lands}
+            pagination
+            paginationMode="server"
+            rowCount={this.props.landsCount}
+            rowsPerPageOptions={[10,50,100]}
+            page={this.props.landsCurrentPage}
+            pageSize={this.props.landsPerPage}
+            onPageChange={this.props.handleLandsCurrentPageChange}
+            onPageSizeChange={this.props.handleLandsPerPageChange}
+            loading={this.props.landsLoading}
+          />
         </div>
       </div>
     );

@@ -29,10 +29,16 @@ class App extends Component {
       officer: null,
       org: null,
       landTypes: [],
-      lands: []
+      lands: [],
+      landsCount: 0,
+      landsCurrentPage: 1,
+      landsTotalPages: 1,
+      landsPerPage: 10,
+      landsLoading: false
     };
     this.addLand = this.addLand.bind(this);
     this.addLandType = this.addLandType.bind(this);
+    this.getLands = this.getLands.bind(this);
     this.getSingleLand = this.getSingleLand.bind(this);
   }
 
@@ -79,6 +85,15 @@ class App extends Component {
     }
   };
 
+  componentDidUpdate = async (prevProps, prevState) => {
+    if (
+      prevState.landsCurrentPage !== this.state.landsCurrentPage ||
+      prevState.landsPerPage !== this.state.landsPerPage
+    ) {
+      await this.getLands();
+    }
+  }
+
   getDataFromChain = async () => {
     const { accounts, contract } = this.state;
 
@@ -100,8 +115,18 @@ class App extends Component {
 
   getLands = async () => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URI + '/api/v1/lands');
-      const lands = response.data.map(row => {
+      this.setState({ landsLoading: true });
+      const response = await axios.get(
+        process.env.REACT_APP_SERVER_URI + '/api/v1/lands',
+        {
+          params: {
+            page: this.state.landsCurrentPage,
+            size: this.state.landsPerPage
+          }
+        }
+      );
+      const { totalPages, items, totalItems } = response.data;
+      const lands = items.map(row => {
         let land = {};
         let tambon = '';
         let amphoe = '';
@@ -129,8 +154,13 @@ class App extends Component {
 
         return land;
       });
-      this.setState({ lands: lands });
-      console.log(lands);
+      this.setState({
+        lands: lands,
+        landsCount: totalItems,
+        landsTotalPages: totalPages
+      }, () => {
+        this.setState({ landsLoading: false });
+      });
     } catch (error) {
       console.error(error);
     }
@@ -218,6 +248,18 @@ class App extends Component {
     }
   }
 
+  handleLandsCurrentPageChange = (params) => {
+    this.setState({
+      landsCurrentPage: params.page
+    });
+  }
+
+  handleLandsPerPageChange = (params) => {
+    this.setState({
+      landsPerPage: params.pageSize
+    });
+  }
+
   render() {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
@@ -254,6 +296,12 @@ class App extends Component {
                   <LandList
                     org={this.state.org}
                     lands={this.state.lands}
+                    landsCount={this.state.landsCount}
+                    landsCurrentPage={this.state.landsCurrentPage}
+                    landsPerPage={this.state.landsPerPage}
+                    landsLoading={this.state.landsLoading}
+                    handleLandsCurrentPageChange={this.handleLandsCurrentPageChange}
+                    handleLandsPerPageChange={this.handleLandsPerPageChange}
                   />
                 </Route>
               </Switch>
