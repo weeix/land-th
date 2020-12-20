@@ -1,3 +1,4 @@
+import * as axios from "axios";
 import {
   Breadcrumbs,
   Link,
@@ -9,6 +10,9 @@ import {
   TableRow,
   Typography
 } from "@material-ui/core";
+import {
+  DataGrid
+} from "@material-ui/data-grid";
 import React, { Component } from "react";
 import { withRouter } from "react-router";
 import { GeoJSON as GeoJSONObj } from "leaflet";
@@ -25,15 +29,30 @@ class LandShow extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      columns: [
+        { field: 'id', headerName: 'รหัส', type: 'number' },
+        { field: 'type', headerName: 'ประเภท' },
+        { field: 'issueDate', headerName: 'วันที่ประกาศ', width: 150 },
+        { field: 'expireDate', headerName: 'วันที่สิ้นสุด', width: 150 }
+      ],
       infos: [
         { label: '...', value: '' }
       ],
-      geom: null
+      geom: null,
+      landUses: [],
+      landUsesCount: 0,
+      landUsesCurrentPage: 1,
+      landUsesTotalPages: 1,
+      landUsesPerPage: 10,
+      landUsesLoading: false,
     };
+    this.handleLandUsesCurrentPageChange = this.handleLandUsesCurrentPageChange.bind(this);
+    this.handleLandUsesPerPageChange = this.handleLandUsesPerPageChange.bind(this);
   }
 
   componentDidMount = async () => {
     setTimeout(this.getLandData.bind(this), 50);
+    this.getLandUses();
   };
 
   componentDidUpdate = async (prevProps) => {
@@ -68,6 +87,72 @@ class LandShow extends Component {
     this.setState({ infos, geom: geom.toJson() });
   }
 
+  getLandUses = async () => {
+    try {
+      this.setState({ landUsesLoading: true });
+      const { match } = this.props;
+      const response = await axios.get(
+        process.env.REACT_APP_SERVER_URI + '/api/v1/lands/' + match.params.id + '/usages',
+        {
+          params: {
+            page: this.state.landsCurrentPage,
+            size: this.state.landsPerPage
+          }
+        }
+      );
+      const { totalPages, items, totalItems } = response.data;
+      const landuses = items.map(row => {
+        let landuse = {};
+        let landusetype = '';
+
+        if ('landusetype' in row) {
+          landusetype = row.landusetype.name;
+        }
+
+        const issueDate = new Date(row.issueDate * 1000);
+        const issueDateString = issueDate.toLocaleDateString('th', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        let expireDateString = '-';
+        if (row.expireDate) {
+          const expireDate = new Date(row.expireDate * 1000);
+          expireDateString = expireDate.toLocaleDateString('th', {
+            year: 'numeric', month: 'long', day: 'numeric'
+          });
+        }
+
+        landuse['id'] = row.id;
+        landuse['type'] = landusetype;
+        landuse['issueDate'] = issueDateString;
+        landuse['expireDate'] = expireDateString;
+
+        return landuse;
+      });
+      this.setState({
+        landUses: landuses,
+        landUsesCount: totalItems,
+        landUsesTotalPages: totalPages
+      }, () => {
+        this.setState({ landUsesLoading: false });
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  handleLandUsesCurrentPageChange = (params) => {
+    this.setState({
+      landUsesCurrentPage: params.page
+    });
+  }
+
+  handleLandUsesPerPageChange = (params) => {
+    this.setState({
+      landUsesPerPage: params.pageSize
+    });
+  }
+
   render() {
     const { match } = this.props;
     const landGeom = () => {
@@ -76,7 +161,7 @@ class LandShow extends Component {
       }
     }
     return (
-      <div>
+      <React.Fragment>
         <Breadcrumbs aria-label="breadcrumb" className="breadcrumb">
           <Link color="inherit" href="/">รูปแปลงทั้งหมด</Link>
           <Typography>รูปแปลงรหัส {match.params.id}</Typography>
@@ -110,7 +195,23 @@ class LandShow extends Component {
             }}
           </MapConsumer>
         </MapContainer>
-      </div>
+        <h2>การใช้ประโยชน์รูปแปลง</h2>
+        <div style={{ height: 500, width: "100%" }}>
+          <DataGrid
+            columns={this.state.columns}
+            rows={this.state.landUses}
+            pagination
+            paginationMode="server"
+            rowCount={this.state.landUsesCount}
+            rowsPerPageOptions={[10,50,100]}
+            page={this.state.landUsesCurrentPage}
+            pageSize={this.state.landUsesPerPage}
+            onPageChange={this.state.handleLandUsestatesCurrentPageChange}
+            onPageSizeChange={this.state.handleLandUsesPerPageChange}
+            loading={this.state.landUsesLoading}
+          />
+        </div>
+      </React.Fragment>
     );
   }
 }
