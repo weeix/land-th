@@ -5,17 +5,14 @@ import "./App.css";
 import LandTH from "./contracts/LandTH.json";
 import getWeb3 from "./common/getWeb3";
 import {
-  Container,
-  Grid,
-  List,
-  ListItem,
-  ListItemText
+  Backdrop,
+  CircularProgress,
+  Container
 } from "@material-ui/core";
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link as RouterLink
+  Route
 } from "react-router-dom";
 import NavBar from "./common/NavBar";
 import LandList from "./landlist";
@@ -37,13 +34,20 @@ class App extends Component {
       org: null,
       landTypes: [],
       lands: [],
+      landsCount: 0,
+      landsCurrentPage: 1,
+      landsTotalPages: 1,
+      landsPerPage: 10,
+      landsLoading: false,
       landUseTypes: [],
-      landUses: []
+      landUses: [],
+      loading: false
     };
     this.addLand = this.addLand.bind(this);
     this.addLandType = this.addLandType.bind(this);
     this.addLandUse = this.addLandUse.bind(this);
     this.addLandUseType = this.addLandUseType.bind(this);
+    this.getLands = this.getLands.bind(this);
     this.getSingleLand = this.getSingleLand.bind(this);
   }
 
@@ -72,10 +76,10 @@ class App extends Component {
       this.setState({ web3, accounts, contract: instance }, this.getDataFromChain);
 
       // Get landtypes
-      this.getLandTypes();
+      await this.getLandTypes();
 
       // Get lands
-      this.getLands();
+      await this.getLands();
 
       // Get landusetypes
       this.getLandUseTypes();
@@ -92,6 +96,15 @@ class App extends Component {
       console.error(error);
     }
   };
+
+  componentDidUpdate = async (prevProps, prevState) => {
+    if (
+      prevState.landsCurrentPage !== this.state.landsCurrentPage ||
+      prevState.landsPerPage !== this.state.landsPerPage
+    ) {
+      await this.getLands();
+    }
+  }
 
   getDataFromChain = async () => {
     const { accounts, contract } = this.state;
@@ -114,8 +127,18 @@ class App extends Component {
 
   getLands = async () => {
     try {
-      const response = await axios.get(process.env.REACT_APP_SERVER_URI + '/api/v1/lands');
-      const lands = response.data.map(row => {
+      this.setState({ landsLoading: true });
+      const response = await axios.get(
+        process.env.REACT_APP_SERVER_URI + '/api/v1/lands',
+        {
+          params: {
+            page: this.state.landsCurrentPage,
+            size: this.state.landsPerPage
+          }
+        }
+      );
+      const { totalPages, items, totalItems } = response.data;
+      const lands = items.map(row => {
         let land = {};
         let tambon = '';
         let amphoe = '';
@@ -137,14 +160,27 @@ class App extends Component {
           year: 'numeric', month: 'long', day: 'numeric'
         });
 
+        let landTypeString = row.landtypeId.toString();
+        for (const landType of this.state.landTypes) {
+          if (row.landtypeId === landType.id) {
+            landTypeString = landType.name;
+          }
+        }
+
         land['id'] = row.id;
+        land['type'] = landTypeString;
         land['location'] = locationString;
         land['issueDate'] = issueDateString;
 
         return land;
       });
-      this.setState({ lands: lands });
-      console.log(lands);
+      this.setState({
+        lands: lands,
+        landsCount: totalItems,
+        landsTotalPages: totalPages
+      }, () => {
+        this.setState({ landsLoading: false });
+      });
     } catch (error) {
       console.error(error);
     }
@@ -172,6 +208,7 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     try {
+      this.setState({ loading: true });
       const result = await contract.methods.addLand(
         landTypeId,
         issueDate,
@@ -184,10 +221,16 @@ class App extends Component {
       );
       return result;
     } catch (error) {
-      if(error.message.search('land type must only be created by officer\'s organization') !== -1) {
+      if (error.message.search('land type must only be created by officer\'s organization') !== -1) {
         swal(
           'เกิดข้อผิดพลาด',
           'ไม่สามารถเลือกชนิดรูปแปลงของหน่วยงานอื่นได้',
+          'error'
+        );
+      } else if (error.message.search('User denied transaction') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'ผู้ใช้ปฏิเสธการทำธุรกรรม',
           'error'
         );
       } else {
@@ -198,6 +241,8 @@ class App extends Component {
         );
       }
       console.error(error);
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
@@ -205,6 +250,7 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     try {
+      this.setState({ loading: true });
       const result = await contract.methods.addLandType(
         name,
         description
@@ -216,10 +262,16 @@ class App extends Component {
       );
       return result;
     } catch (error) {
-      if(error.message.search('must not be empty') !== -1) {
+      if (error.message.search('must not be empty') !== -1) {
         swal(
           'เกิดข้อผิดพลาด',
           'โปรดระบุชื่อและคำอธิบายของชนิดรูปแปลง',
+          'error'
+        );
+      } else if (error.message.search('User denied transaction') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'ผู้ใช้ปฏิเสธการทำธุรกรรม',
           'error'
         );
       } else {
@@ -230,6 +282,8 @@ class App extends Component {
         );
       }
       console.error(error);
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
@@ -310,89 +364,78 @@ class App extends Component {
     }
   }
 
+  handleLandsCurrentPageChange = (params) => {
+    this.setState({
+      landsCurrentPage: params.page
+    });
+  }
+
+  handleLandsPerPageChange = (params) => {
+    this.setState({
+      landsPerPage: params.pageSize
+    });
+  }
+
   render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
     return (
       <Router>
         <div className="App">
+          <Backdrop open={!this.state.web3 || this.state.loading} className="backdrop">
+            <CircularProgress color="inherit" />
+          </Backdrop>
           <NavBar
             displayName={this.state.accounts != null ? this.state.accounts[0] : 'Guest'}
           />
-          <Container>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={12} md={4}>
-                <List component="nav" aria-label="menu">
-                  <ListItem button component={RouterLink} to="/">
-                    <ListItemText
-                      primary="รูปแปลงทั้งหมด"
-                    />
-                  </ListItem>
-                  <ListItem button component={RouterLink} to="/addland">
-                    <ListItemText
-                      primary="เพิ่มรูปแปลง"
-                    />
-                  </ListItem>
-                  <ListItem button component={RouterLink} to="/addlandtype">
-                    <ListItemText
-                      primary="เพิ่มชนิดรูปแปลง"
-                    />
-                  </ListItem>
-                  <ListItem button component={RouterLink} to="/addlanduse">
-                    <ListItemText
-                      primary="เพิ่มการใช้รูปแปลง"
-                    />
-                  </ListItem>
-                  <ListItem button component={RouterLink} to="/addlandusetype">
-                    <ListItemText
-                      primary="เพิ่มชนิดการใช้รูปแปลง"
-                    />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} sm={12} md={8}>
-                <Switch>
-                  <Route path="/addlandusetype">
-                    <LandUseTypeAdd
-                      org={this.state.org}
-                      addLandUseType={this.addLandUseType}
-                    />
-                  </Route>
-                  <Route path="/addlanduse">
-                    <LandUseAdd
-                      org={this.state.org}
-                      addLandUse={this.addLandUse}
-                      landUseTypes={this.state.landUseTypes}
-                    />
-                  </Route>
-                  <Route path="/addlandtype">
-                    <LandTypeAdd
-                      org={this.state.org}
-                      addLandType={this.addLandType}
-                    />
-                  </Route>
-                  <Route path="/addland">
-                    <LandAdd
-                      org={this.state.org}
-                      addLand={this.addLand}
-                      landTypes={this.state.landTypes}
-                    />
-                  </Route>
-                  <Route path="/lands/:id">
-                    <LandShow
-                      getSingleLand={this.getSingleLand}
-                    />
-                  </Route>
-                  <Route path="/">
-                    <LandList
-                      org={this.state.org}
-                      lands={this.state.lands}
-                    />
-                  </Route>
-                </Switch>
-              </Grid>
-            </Grid>
+          <Container className="container">
+            <div className="tool-bar" />
+            <main>
+              <Switch>
+                <Route path="/addlandusetype">
+                  <LandUseTypeAdd
+                    org={this.state.org}
+                    addLandUseType={this.addLandUseType}
+                  />
+                </Route>
+                <Route path="/addlanduse">
+                  <LandUseAdd
+                    org={this.state.org}
+                    addLandUse={this.addLandUse}
+                    landUseTypes={this.state.landUseTypes}
+                  />
+                </Route>
+                <Route path="/addlandtype">
+                  <LandTypeAdd
+                    org={this.state.org}
+                    addLandType={this.addLandType}
+                  />
+                </Route>
+                <Route path="/addland">
+                  <LandAdd
+                    org={this.state.org}
+                    addLand={this.addLand}
+                    landTypes={this.state.landTypes}
+                  />
+                </Route>
+                <Route path="/lands/:id">
+                  <LandShow
+                    getSingleLand={this.getSingleLand}
+                    landTypes={this.state.landTypes}
+                  />
+                </Route>
+                <Route path="/">
+                  <LandList
+                    org={this.state.org}
+                    lands={this.state.lands}
+                    landsCount={this.state.landsCount}
+                    landsCurrentPage={this.state.landsCurrentPage}
+                    landsPerPage={this.state.landsPerPage}
+                    landsLoading={this.state.landsLoading}
+                    handleLandsCurrentPageChange={this.handleLandsCurrentPageChange}
+                    handleLandsPerPageChange={this.handleLandsPerPageChange}
+                  />
+                </Route>
+              </Switch>
+            </main>
           </Container>
         </div>
       </Router>

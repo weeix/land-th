@@ -1,10 +1,13 @@
 import {
+  Breadcrumbs,
+  Link,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableRow
+  TableRow,
+  Typography
 } from "@material-ui/core";
 import React, { Component } from "react";
 import { withRouter } from "react-router";
@@ -30,19 +33,37 @@ class LandShow extends Component {
   }
 
   componentDidMount = async () => {
-    const { match } = this.props;
+    setTimeout(this.getLandData.bind(this), 50);
+  };
+
+  componentDidUpdate = async (prevProps) => {
+    if (prevProps.landTypes !== this.props.landTypes) {
+      // if landTypes updated, reload data
+      await this.getLandData();
+    }
+  }
+
+  getLandData = async () => {
+    const { match, landTypes } = this.props;
     const land = await this.props.getSingleLand(match.params.id);
     const issueDate = new Date(parseInt(land.issueDate) * 1000);
     const issueDateString = issueDate.toLocaleDateString('th', {
       year: 'numeric', month: 'long', day: 'numeric'
     });
+    let landTypeString = land.landTypeId;
+    for (const landType of landTypes) {
+      const landTypeIdVal = parseInt(land.landTypeId);
+      if (landTypeIdVal === landType.id) {
+        landTypeString = landType.name + ' (' + landType.description + ')';
+      }
+    }
     const infos = [
-      { label: 'วันที่ประกาศ', value: issueDateString }
+      { label: 'วันที่ประกาศ', value: issueDateString },
+      { label: 'ประเภทแปลง', value: landTypeString}
     ]
     const geom = new Wkt.Wkt(land.geom);
     this.setState({ infos, geom: geom.toJson() });
-    console.log(land);
-  };
+  }
 
   render() {
     const { match } = this.props;
@@ -53,6 +74,10 @@ class LandShow extends Component {
     }
     return (
       <div>
+        <Breadcrumbs aria-label="breadcrumb" className="breadcrumb">
+          <Link color="inherit" href="/">รูปแปลงทั้งหมด</Link>
+          <Typography>รูปแปลงรหัส {match.params.id}</Typography>
+        </Breadcrumbs>
         <h1>รูปแปลงรหัส {match.params.id}</h1>
         <TableContainer component={Paper}>
           <Table>

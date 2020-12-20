@@ -23,3 +23,12 @@ code {
 .MuiTableRow-hover {
   cursor: pointer;
 }
+
+.breadcrumb {
+  margin-top: 2em !important;
+}
+
+.backdrop {
+  z-index: 35001 !important;
+  color: #ffffff;
+}

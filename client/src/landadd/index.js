@@ -46,11 +46,12 @@ class LandAdd extends Component {
         <p>
           หน่วยงาน: {orgName} ({orgAbbr})
         </p>
-        <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
+        <form autoComplete="off" onSubmit={this.handleSubmit}>
           <div>
             <TextField
               id="issue-date"
               label="วันที่ประกาศ"
+              required
               type="date"
               InputLabelProps={{
                 shrink: true,
@@ -68,6 +69,7 @@ class LandAdd extends Component {
               onChange={this.handleLandTypeChange}
               value={this.state.landTypeId}
               label="ประเภทที่ดิน"
+              required
               inputProps={{
                 name: 'land-type',
                 id: 'land-type'
@@ -83,6 +85,7 @@ class LandAdd extends Component {
             <TextField
               id="geom-wkt"
               label="WKT"
+              required
               multiline
               rows={4}
               variant="outlined"

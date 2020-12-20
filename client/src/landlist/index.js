@@ -1,12 +1,12 @@
 import {
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow
+  IconButton
 } from "@material-ui/core";
+import {
+  DataGrid
+} from "@material-ui/data-grid";
+import {
+  Map as MapIcon
+} from "@material-ui/icons"
 import React, { Component } from "react";
 import { withRouter } from "react-router"
 
@@ -17,23 +17,33 @@ class LandList extends Component {
     this.state = {
       columns: [
         { field: 'id', headerName: 'รหัส', type: 'number' },
-        { field: 'location', headerName: 'พื้นที่' },
-        { field: 'issueDate', headerName: 'วันที่ประกาศ', type: 'date' }
-      ],
-      rows: [
-        { id: 1, location: 'อ.ลาดยาว จ.นครสวรรค์', issueDate: '2020-09-20' },
-        { id: 2, location: 'อ.ขุนยวม จ.แม่ฮ่องสอน', issueDate: '2020-09-20' },
-        { id: 3, location: 'อ.ปาย จ.แม่ฮ่องสอน', issueDate: '2020-09-20' },
-        { id: 4, location: 'อ.หางดง จ.เชียงใหม่', issueDate: '2020-09-22' },
-        { id: 5, location: 'อ.กุดจับ จ.อุดรธานี', issueDate: '2020-09-22' },
-        { id: 6, location: 'อ.กุดจับ จ.อุดรธานี', issueDate: '2020-09-26' },
-        { id: 7, location: 'อ.บ้านไผ่ จ.ขอนแก่น', issueDate: '2020-09-26' }
+        { field: 'type', headerName: 'ประเภท' },
+        { field: 'location', headerName: 'พื้นที่', width: 280 },
+        { field: 'issueDate', headerName: 'วันที่ประกาศ', width: 150 },
+        {
+          field: '',
+          headerName: 'แผนที่',
+          width: 80,
+          sortable: false,
+          disableClickEventBubbling: true,
+          renderCell: params => {
+            const { history } = this.props;
+            const onClick = () => {
+              const id = params.getValue('id');
+              history.push('/lands/' + id);
+            }
+            return (
+              <IconButton onClick={onClick}>
+                <MapIcon />
+              </IconButton>
+            )
+          }
+        }
       ]
     }
   }
 
   render() {
-    const { history } = this.props;
     const orgName = this.props.org? this.props.org.name : "";
     const orgAbbr = this.props.org? this.props.org.abbr : "";
     return (
@@ -42,26 +52,21 @@ class LandList extends Component {
         <p>
           หน่วยงาน: {orgName} ({orgAbbr})
         </p>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>รหัส</TableCell>
-                <TableCell>พื้นที่</TableCell>
-                <TableCell align="right">วันที่ประกาศ</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {this.props.lands.map((land) => (
-                <TableRow key={land.id} hover={true} onClick={() => { history.push('/lands/' + land.id) }}>
-                  <TableCell>{land.id}</TableCell>
-                  <TableCell>{land.location}</TableCell>
-                  <TableCell align="right">{land.issueDate}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <div style={{ height: 500, width: "100%" }}>
+          <DataGrid
+            columns={this.state.columns}
+            rows={this.props.lands}
+            pagination
+            paginationMode="server"
+            rowCount={this.props.landsCount}
+            rowsPerPageOptions={[10,50,100]}
+            page={this.props.landsCurrentPage}
+            pageSize={this.props.landsPerPage}
+            onPageChange={this.props.handleLandsCurrentPageChange}
+            onPageSizeChange={this.props.handleLandsPerPageChange}
+            loading={this.props.landsLoading}
+          />
+        </div>
       </div>
     );
   }
