@@ -199,6 +199,10 @@ class App extends Component {
   getSingleLand = async (landId) => {
     const { contract } = this.state;
 
+    if (!contract) {
+      return;
+    }
+
     const land = await contract.methods.lands(landId).call();
 
     return land;

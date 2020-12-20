@@ -46,6 +46,9 @@ class LandShow extends Component {
   getLandData = async () => {
     const { match, landTypes } = this.props;
     const land = await this.props.getSingleLand(match.params.id);
+    if (!land) {
+      return;
+    }
     const issueDate = new Date(parseInt(land.issueDate) * 1000);
     const issueDateString = issueDate.toLocaleDateString('th', {
       year: 'numeric', month: 'long', day: 'numeric'
