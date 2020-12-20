@@ -440,6 +440,7 @@ class App extends Component {
                 </Route>
               </Switch>
             </main>
+            <div className="tool-bar" />
           </Container>
         </div>
       </Router>
