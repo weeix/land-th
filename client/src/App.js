@@ -21,6 +21,8 @@ import NavBar from "./common/NavBar";
 import LandList from "./landlist";
 import LandAdd from "./landadd";
 import LandTypeAdd from "./landtypeadd";
+import LandUseAdd from "./landuseadd";
+import LandUseTypeAdd from "./landusetypeadd";
 import LandShow from "./landshow";
 
 class App extends Component {
@@ -34,10 +36,14 @@ class App extends Component {
       officer: null,
       org: null,
       landTypes: [],
-      lands: []
+      lands: [],
+      landUseTypes: [],
+      landUses: []
     };
     this.addLand = this.addLand.bind(this);
     this.addLandType = this.addLandType.bind(this);
+    this.addLandUse = this.addLandUse.bind(this);
+    this.addLandUseType = this.addLandUseType.bind(this);
     this.getSingleLand = this.getSingleLand.bind(this);
   }
 
@@ -70,6 +76,9 @@ class App extends Component {
 
       // Get lands
       this.getLands();
+
+      // Get landusetypes
+      this.getLandUseTypes();
 
       // Listen for new events
       instance.events.allEvents()
@@ -136,6 +145,16 @@ class App extends Component {
       });
       this.setState({ lands: lands });
       console.log(lands);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  getLandUseTypes = async () => {
+    try {
+      const response = await axios.get(process.env.REACT_APP_SERVER_URI + '/api/v1/landusetypes');
+      this.setState({ landUseTypes: response.data });
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -214,12 +233,80 @@ class App extends Component {
     }
   }
 
+  addLandUse = async (landUseTypeId, landId, issueDate, expireDate) => {
+    const { accounts, contract } = this.state;
+
+    try {
+      const result = await contract.methods.addLandUse(
+        landUseTypeId,
+        landId,
+        issueDate,
+        expireDate
+      ).send({ from: accounts[0] });
+      swal(
+        'สำเร็จ',
+        'เพิ่มการใช้รูปแปลงแล้ว',
+        'success'
+      );
+      return result;
+    } catch (error) {
+      if(error.message.search('land use type must only be created by officer\'s organization') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'ไม่สามารถเลือกชนิดการใช้รูปแปลงของหน่วยงานอื่นได้',
+          'error'
+        );
+      } else {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          'error'
+        );
+      }
+      console.error(error);
+    }
+  }
+
+  addLandUseType = async (name, description) => {
+    const { accounts, contract } = this.state;
+
+    try {
+      const result = await contract.methods.addLandUseType(
+        name,
+        description
+      ).send({ from: accounts[0] });
+      swal(
+        'สำเร็จ',
+        'เพิ่มชนิดการใช้รูปแปลงแล้ว',
+        'success'
+      );
+      return result;
+    } catch (error) {
+      if(error.message.search('must not be empty') !== -1) {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'โปรดระบุชื่อและคำอธิบายของชนิดการใช้รูปแปลง',
+          'error'
+        );
+      } else {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          'error'
+        );
+      }
+      console.error(error);
+    }
+  }
+
   handleBlockchainEvent = async (e) => {
     console.log(e);
     if (e.event === 'LandTypeCreated') {
       setTimeout(this.getLandTypes.bind(this), 3000);
     } else if (e.event === 'LandCreated') {
       setTimeout(this.getLands.bind(this), 3000);
+    } else if (e.event === 'LandUseTypeCreated') {
+      setTimeout(this.getLandUseTypes.bind(this), 3000);
     }
   }
 
@@ -252,10 +339,33 @@ class App extends Component {
                       primary="เพิ่มชนิดรูปแปลง"
                     />
                   </ListItem>
+                  <ListItem button component={RouterLink} to="/addlanduse">
+                    <ListItemText
+                      primary="เพิ่มการใช้รูปแปลง"
+                    />
+                  </ListItem>
+                  <ListItem button component={RouterLink} to="/addlandusetype">
+                    <ListItemText
+                      primary="เพิ่มชนิดการใช้รูปแปลง"
+                    />
+                  </ListItem>
                 </List>
               </Grid>
               <Grid item xs={12} sm={12} md={8}>
                 <Switch>
+                  <Route path="/addlandusetype">
+                    <LandUseTypeAdd
+                      org={this.state.org}
+                      addLandUseType={this.addLandUseType}
+                    />
+                  </Route>
+                  <Route path="/addlanduse">
+                    <LandUseAdd
+                      org={this.state.org}
+                      addLandUse={this.addLandUse}
+                      landUseTypes={this.state.landUseTypes}
+                    />
+                  </Route>
                   <Route path="/addlandtype">
                     <LandTypeAdd
                       org={this.state.org}

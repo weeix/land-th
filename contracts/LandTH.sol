@@ -38,6 +38,22 @@ contract LandTH {
         string updateComment;
     }
 
+    struct LandUseType {
+        uint id;
+        string name;
+        string description;
+        uint orgId;
+    }
+    
+    struct LandUse {
+        uint id;
+        uint landUseTypeId;
+        uint landId;
+        uint issueDate;
+        int expireDate;
+        string updateComment;
+    }
+
     // Event
 
     event OrgCreated(
@@ -69,6 +85,22 @@ contract LandTH {
         string updateComment
     );
 
+    event LandUseTypeCreated(
+        uint id,
+        string name,
+        string description,
+        uint orgId
+    );
+    
+    event LandUseCreated(
+        uint id,
+        uint landUseTypeId,
+        uint landId,
+        uint issueDate,
+        int expireDate,
+        string updateComment
+    );
+
     // Mapping
 
     /* Organizations */
@@ -85,6 +117,14 @@ contract LandTH {
     /* Lands */
     uint public landCount;
     mapping(uint => Land) public lands;
+    
+    /* Land use types */
+    uint public landUseTypeCount;
+    mapping(uint => LandUseType) public landUseTypes;
+    
+    /* Land uses */
+    uint public landUseCount;
+    mapping(uint => LandUse) public landUses;
 
     // Method
     
@@ -215,5 +255,41 @@ contract LandTH {
         landCount += 1;
         lands[landCount] = Land(landCount, _landTypeId, _issueDate, _geom, "");
         emit LandCreated(landCount, _landTypeId, _issueDate, _geom, "");
+    }
+
+    /**
+     * @dev Add new land use type
+     * @param _name land use type name
+     * @param _description land use type description
+     */
+    function addLandUseType(string memory _name, string memory _description) public {
+        Officer storage officer = officers[msg.sender];
+        require(officer.orgAdmin == true, "only organizations' administrator can add land use type");
+        require(bytes(_name).length > 0, "name must not be empty");
+        landUseTypeCount += 1;
+        landUseTypes[landUseTypeCount] = LandUseType(landUseTypeCount, _name, _description, officer.orgId);
+        emit LandUseTypeCreated(landUseTypeCount, _name, _description, officer.orgId);
+    }
+    
+    /**
+     * @dev Add new use land
+     * @param _landUseTypeId land use type id
+     * @param _landId land id
+     * @param _issueDate issue date timestamp
+     * @param _expireDate expire date timestamp (if any)
+     */
+    function addLandUse(uint _landUseTypeId, uint _landId, uint _issueDate, int _expireDate) public {
+        Officer storage officer = officers[msg.sender];
+        LandUseType storage landUseType = landUseTypes[_landUseTypeId];
+        Land storage land = lands[_landId];
+        require(bytes(officer.ref).length > 0, "only officers can add land type");
+        require(land.issueDate > 0, "land must be issued");
+        require(_issueDate > 0, "issueDate must be greater than 0");
+        require(_expireDate > 0 || _expireDate == -1, "expireDate must be greater than 0 or equal to -1");
+        require(bytes(landUseType.name).length > 0, "land use type ID must be valid");
+        require(officer.orgId == landUseType.orgId, "land use type must only be created by officer's organization");
+        landUseCount += 1;
+        landUses[landUseCount] = LandUse(landUseCount, _landUseTypeId, _landId, _issueDate, _expireDate, "");
+        emit LandUseCreated(landUseCount, _landUseTypeId, _landId, _issueDate, _expireDate, "");
     }
 }

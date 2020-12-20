@@ -276,4 +276,76 @@ contract("LandTH", accounts => {
     assert.equal(land.issueDate, 1599380383, "Didn't get the added land");
   });
 
+  it("...should be able to add a new land use type", async () => {
+    const LandTHInstance = await LandTH.deployed();
+
+    // Add a new land use type
+    const result = await LandTHInstance.addLandUseType(
+      "LUT1",
+      "Land use type number 1",
+      { from: accounts[0] }
+    );
+
+    // Get the land type count
+    const landUseTypeCount = await LandTHInstance.landUseTypeCount();
+
+    // Get event
+    const event = result.logs[0].args;
+
+    assert.equal(landUseTypeCount.toNumber(), 1, "The land use type wasn't added.");
+    assert.equal(event.id.toNumber(), landUseTypeCount.toNumber(), "Land use type ID is incorrect.");
+  });
+
+  it("...should be able to add a new land use", async () => {
+    const LandTHInstance = await LandTH.deployed();
+
+    // Add a new land type
+    await LandTHInstance.addLandType(
+      "LT1",
+      "Land type number 1",
+      { from: accounts[0] }
+    );
+
+    // Get the land type count
+    const landTypeCount = await LandTHInstance.landTypeCount();
+
+    // Add a new land
+    await LandTHInstance.addLand(
+      landTypeCount,
+      1599380383,
+      "MULTIPOLYGON (((100.580129 13.849321,100.579834 13.849479,100.579901 13.849594,100.580008 13.849605,100.580225 13.849484,100.580129 13.849321)))",
+      { from: accounts[0] }
+    );
+
+    // Get the land count
+    const landCount = await LandTHInstance.landCount();
+
+    // Add a new land use type
+    await LandTHInstance.addLandUseType(
+      "LUT1",
+      "Land use type number 1",
+      { from: accounts[0] }
+    );
+
+    // Get the land use type count
+    const landUseTypeCount = await LandTHInstance.landUseTypeCount();
+
+    // Add a new land use
+    const result = await LandTHInstance.addLandUse(
+      landUseTypeCount,
+      landCount,
+      1607871981,
+      -1
+    );
+
+    // Get the land use count
+    const landUseCount = await LandTHInstance.landUseCount();
+
+    // Get event
+    const event = result.logs[0].args;
+
+    assert.equal(landUseCount.toNumber(), 1, "The land use wasn't added.");
+    assert.equal(event.id.toNumber(), landUseCount.toNumber(), "Land use ID is incorrect.");
+  });
+
 });

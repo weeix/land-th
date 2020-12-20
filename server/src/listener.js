@@ -179,6 +179,21 @@ async function handleEvent(e) {
       issueDate: e.returnValues.issueDate,
       geom: sequelize.fn('ST_GeomFromText', e.returnValues.geom, 4326)
     });
+  } else if (e.event === 'LandUseTypeCreated') {
+    await sequelize.models.landusetype.create({
+      id: e.returnValues.id,
+      name: e.returnValues.name,
+      description: e.returnValues.description,
+      orgId: e.returnValues.orgId
+    });
+  } else if (e.event === 'LandUseCreated') {
+    await sequelize.models.landuse.create({
+      id: e.returnValues.id,
+      landusetypeId: e.returnValues.landUseTypeId,
+      landId: e.returnValues.landId,
+      issueDate: e.returnValues.issueDate,
+      expireDate: e.returnValues.expireDate == -1 ? null : e.returnValues.expireDate
+    });
   }
 
   console.log(e.blockNumber + ' ' + e.transactionHash + ' ' + e.event);
