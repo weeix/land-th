@@ -31,6 +31,7 @@
 
 1. `npm install`
 1. `docker-compose up`
+1. รอให้ blockchain เริ่มทำงาน
 1. `npm run migrate`
 1. `npm run start`
 
