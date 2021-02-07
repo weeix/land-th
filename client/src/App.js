@@ -144,11 +144,11 @@ class App extends Component {
         let amphoe = '';
         let changwat = '';
 
-        if ('tambon' in row) {
+        if ('tambon' in row && row.tambon != null) {
           tambon = row.tambon.name;
-          if ('amphoe' in row.tambon) {
+          if ('amphoe' in row.tambon && row.tambon.amphoe != null) {
             amphoe = row.tambon.amphoe.name;
-            if ('changwat' in row.tambon.amphoe) {
+            if ('changwat' in row.tambon.amphoe && row.tambon.amphoe.changwat != null) {
               changwat = row.tambon.amphoe.changwat.name;
             }
           }
