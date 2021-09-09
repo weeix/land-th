@@ -19,6 +19,7 @@ const createApp = async () => {
       credentials: true
     };
     app.use(cors(corsOptions));
+    app.use(express.json());
 
     // routes
     app.use('/api/v1', apiV1);

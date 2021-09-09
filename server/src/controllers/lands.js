@@ -54,6 +54,31 @@ const routeListLands = async (req, res, next) => {
   }
 }
 
+const routeLandIntersections = async (req, res, next) => {
+  try {
+    const intersections = await sequelize.models.land.findAll({
+      where: sequelize.where(
+        sequelize.fn(
+          'ST_Intersects',
+          sequelize.col('geom'),
+          sequelize.fn('ST_GeomFromText', req.body.geom, 4326)
+        ),
+        true
+      )
+    });
+    return res.send(intersections);
+  } catch (error) {
+    if ('name' in error && error.name == 'SequelizeDatabaseError') {
+      res.status(400);
+      return res.send({
+        error: error.message
+      });
+    }
+    next(error);
+  }
+}
+
 module.exports = {
-  routeListLands
+  routeListLands,
+  routeLandIntersections
 };
