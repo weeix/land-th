@@ -9,9 +9,9 @@ const routeListLanduses = async (req, res, next) => {
     if (
       'page' in req.query &&
       Number.isInteger(parseInt(req.query.page)) &&
-      parseInt(req.query.page) > 0
+      parseInt(req.query.page) >= 0
     ) {
-      pageOffset = parseInt(req.query.page) - 1;
+      pageOffset = parseInt(req.query.page);
     }
 
     if (
@@ -39,7 +39,7 @@ const routeListLanduses = async (req, res, next) => {
       offset: pageOffset * pageSize
     });
     return res.send({
-      currentPage: pageOffset + 1,
+      currentPage: pageOffset,
       totalPages: Math.ceil(landuse.count/pageSize),
       totalItems: landuse.count,
       items: landuse.rows

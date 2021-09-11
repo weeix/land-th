@@ -35,7 +35,7 @@ class App extends Component {
       landTypes: [],
       lands: [],
       landsCount: 0,
-      landsCurrentPage: 1,
+      landsCurrentPage: 0,
       landsTotalPages: 1,
       landsPerPage: 10,
       landsLoading: false,
@@ -368,15 +368,15 @@ class App extends Component {
     }
   }
 
-  handleLandsCurrentPageChange = (params) => {
+  handleLandsCurrentPageChange = (page) => {
     this.setState({
-      landsCurrentPage: params.page
+      landsCurrentPage: page
     });
   }
 
-  handleLandsPerPageChange = (params) => {
+  handleLandsPerPageChange = (pageSize) => {
     this.setState({
-      landsPerPage: params.pageSize
+      landsPerPage: pageSize
     });
   }
 

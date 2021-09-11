@@ -2,11 +2,11 @@ import {
   IconButton
 } from "@material-ui/core";
 import {
-  DataGrid
-} from "@material-ui/data-grid";
-import {
   Map as MapIcon
 } from "@material-ui/icons"
+import {
+  DataGrid
+} from "@mui/x-data-grid";
 import React, { Component } from "react";
 import { withRouter } from "react-router"
 
@@ -29,7 +29,7 @@ class LandList extends Component {
           renderCell: params => {
             const { history } = this.props;
             const onClick = () => {
-              const id = params.getValue('id');
+              const id = params.row.id;
               history.push('/lands/' + id);
             }
             return (

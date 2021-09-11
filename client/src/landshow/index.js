@@ -12,7 +12,7 @@ import {
 } from "@material-ui/core";
 import {
   DataGrid
-} from "@material-ui/data-grid";
+} from "@mui/x-data-grid";
 import React, { Component } from "react";
 import { withRouter } from "react-router";
 import { GeoJSON as GeoJSONObj } from "leaflet";
@@ -41,7 +41,7 @@ class LandShow extends Component {
       geom: null,
       landUses: [],
       landUsesCount: 0,
-      landUsesCurrentPage: 1,
+      landUsesCurrentPage: 0,
       landUsesTotalPages: 1,
       landUsesPerPage: 10,
       landUsesLoading: false,
@@ -147,15 +147,15 @@ class LandShow extends Component {
     }
   }
 
-  handleLandUsesCurrentPageChange = (params) => {
+  handleLandUsesCurrentPageChange = (page) => {
     this.setState({
-      landUsesCurrentPage: params.page
+      landUsesCurrentPage: page
     });
   }
 
-  handleLandUsesPerPageChange = (params) => {
+  handleLandUsesPerPageChange = (pageSize) => {
     this.setState({
-      landUsesPerPage: params.pageSize
+      landUsesPerPage: pageSize
     });
   }
 
