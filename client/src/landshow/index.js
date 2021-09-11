@@ -55,10 +55,16 @@ class LandShow extends Component {
     this.getLandUses();
   };
 
-  componentDidUpdate = async (prevProps) => {
+  componentDidUpdate = async (prevProps, prevState) => {
     if (prevProps.landTypes !== this.props.landTypes) {
       // if landTypes updated, reload data
       await this.getLandData();
+    }
+    if (
+      prevState.landUsesCurrentPage !== this.state.landUsesCurrentPage ||
+      prevState.landUsesPerPage !== this.state.landUsesPerPage
+    ) {
+      this.getLandUses();
     }
   }
 
@@ -95,8 +101,8 @@ class LandShow extends Component {
         process.env.REACT_APP_SERVER_URI + '/api/v1/lands/' + match.params.id + '/usages',
         {
           params: {
-            page: this.state.landsCurrentPage,
-            size: this.state.landsPerPage
+            page: this.state.landUsesCurrentPage,
+            size: this.state.landUsesPerPage
           }
         }
       );
@@ -206,8 +212,8 @@ class LandShow extends Component {
             rowsPerPageOptions={[10,50,100]}
             page={this.state.landUsesCurrentPage}
             pageSize={this.state.landUsesPerPage}
-            onPageChange={this.state.handleLandUsestatesCurrentPageChange}
-            onPageSizeChange={this.state.handleLandUsesPerPageChange}
+            onPageChange={this.handleLandUsesCurrentPageChange}
+            onPageSizeChange={this.handleLandUsesPerPageChange}
             loading={this.state.landUsesLoading}
           />
         </div>
