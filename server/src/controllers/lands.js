@@ -1,4 +1,5 @@
 const sequelize = require('../sequelize');
+const { Op } = require("sequelize");
 
 const routeListLands = async (req, res, next) => {
   try {
@@ -54,17 +55,29 @@ const routeListLands = async (req, res, next) => {
   }
 }
 
-const routeLandIntersections = async (req, res, next) => {
+const routeLandOverlaps = async (req, res, next) => {
   try {
     const intersections = await sequelize.models.land.findAll({
-      where: sequelize.where(
-        sequelize.fn(
-          'ST_Intersects',
-          sequelize.col('geom'),
-          sequelize.fn('ST_GeomFromText', req.body.geom, 4326)
-        ),
-        true
-      )
+      where: {
+        [Op.or]: [
+          sequelize.where(
+            sequelize.fn(
+              'ST_Overlaps',
+              sequelize.col('geom'),
+              sequelize.fn('ST_GeomFromText', req.body.geom, 4326)
+            ),
+            true
+          ),
+          sequelize.where(
+            sequelize.fn(
+              'ST_Equals',
+              sequelize.col('geom'),
+              sequelize.fn('ST_GeomFromText', req.body.geom, 4326)
+            ),
+            true
+          )
+        ]
+      }
     });
     return res.send(intersections);
   } catch (error) {
@@ -80,5 +93,5 @@ const routeLandIntersections = async (req, res, next) => {
 
 module.exports = {
   routeListLands,
-  routeLandIntersections
+  routeLandOverlaps
 };

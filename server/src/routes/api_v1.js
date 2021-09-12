@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { routeLandtypesGet } = require('../controllers/landtypes');
-const { routeListLands, routeLandIntersections } = require('../controllers/lands');
+const { routeListLands, routeLandOverlaps } = require('../controllers/lands');
 const { routeListLandusetypes } = require('../controllers/landusetypes');
 const { routeListLanduses } = require('../controllers/landuses');
 
@@ -18,7 +18,7 @@ router.get('/', (req, res) => {
 
 router.get('/landtypes', routeLandtypesGet);
 router.get('/lands', routeListLands);
-router.post('/lands/intersections', routeLandIntersections);
+router.post('/lands/overlaps', routeLandOverlaps);
 router.get('/lands/:landId/usages', routeListLanduses);
 router.get('/landusetypes', routeListLandusetypes);
 
