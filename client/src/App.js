@@ -213,19 +213,32 @@ class App extends Component {
 
     try {
       this.setState({ loading: true });
-      const result = await contract.methods.addLand(
-        landTypeId,
-        issueDate,
-        geom
-      ).send({ from: accounts[0] });
-      swal(
-        'สำเร็จ',
-        'เพิ่มรูปแปลงแล้ว',
-        'success'
-      );
-      return result;
+      const response = await axios.post(process.env.REACT_APP_SERVER_URI + '/api/v1/lands/overlaps', {
+        geom: geom
+      });
+      if (Array.isArray(response.data) && response.data.length === 0) {
+        const result = await contract.methods.addLand(
+          landTypeId,
+          issueDate,
+          geom
+        ).send({ from: accounts[0] });
+        swal(
+          'สำเร็จ',
+          'เพิ่มรูปแปลงแล้ว',
+          'success'
+        );
+        return result;
+      } else {
+        throw Error('land overlaps with existing lands');
+      }
     } catch (error) {
-      if (error.message.search('land type must only be created by officer\'s organization') !== -1) {
+      if (error.message === 'land overlaps with existing lands') {
+        swal(
+          'เกิดข้อผิดพลาด',
+          'รูปแปลงที่จะเพิ่มทับซ้อนรูปแปลงเดิม',
+          'error'
+        );
+      } else if (error.message.search('land type must only be created by officer\'s organization') !== -1) {
         swal(
           'เกิดข้อผิดพลาด',
           'ไม่สามารถเลือกชนิดรูปแปลงของหน่วยงานอื่นได้',
