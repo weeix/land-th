@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, FormControl, InputLabel, Select, TextField } from "@material-ui/core";
+import { withTranslation } from "react-i18next";
 
 class LandAdd extends Component {
   constructor(props) {
@@ -38,19 +39,20 @@ class LandAdd extends Component {
   }
 
   render() {
+    const { t } = this.props;
     const orgName = this.props.org? this.props.org.name : "";
     const orgAbbr = this.props.org? this.props.org.abbr : "";
     return (
       <div>
-        <h1>เพิ่มรูปแปลง</h1>
+        <h1>{t('newAllocation')}</h1>
         <p>
-          หน่วยงาน: {orgName} ({orgAbbr})
+        {t('agency')}: {orgName} ({orgAbbr})
         </p>
         <form autoComplete="off" onSubmit={this.handleSubmit}>
           <div>
             <TextField
               id="issue-date"
-              label="วันที่ประกาศ"
+              label={t('issueDate')}
               required
               type="date"
               InputLabelProps={{
@@ -63,19 +65,19 @@ class LandAdd extends Component {
             />
           </div>
           <FormControl variant="outlined" style={{ minWidth: '180px' }}>
-            <InputLabel htmlFor="land-type">ประเภทที่ดิน</InputLabel>
+            <InputLabel htmlFor="land-type">{t('landType')}</InputLabel>
             <Select
               native
               onChange={this.handleLandTypeChange}
               value={this.state.landTypeId}
-              label="ประเภทที่ดิน"
+              label={t('landType')}
               required
               inputProps={{
                 name: 'land-type',
                 id: 'land-type'
               }}
             >
-              <option aria-label="ไม่มี" value="" />
+              <option aria-label={t('none')} value="" />
               {this.props.landTypes.map((landType) => (
                 <option key={landType.id} value={landType.id}>{landType.name}</option>
               ))}
@@ -95,7 +97,7 @@ class LandAdd extends Component {
             />
           </div>
           <Button variant="contained" color="primary" style={{ margin: '1em 0' }} type="submit">
-            เพิ่มรูปแปลง
+            {t('addAllocation')}
           </Button>
         </form>
       </div>
@@ -103,4 +105,4 @@ class LandAdd extends Component {
   }
 }
 
-export default LandAdd;
+export default withTranslation()(LandAdd);

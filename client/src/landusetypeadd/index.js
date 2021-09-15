@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, TextField } from "@material-ui/core";
+import { withTranslation } from "react-i18next";
 
 class LandUseTypeAdd extends Component {
   constructor(props) {
@@ -32,17 +33,18 @@ class LandUseTypeAdd extends Component {
   render() {
     const orgName = this.props.org? this.props.org.name : "";
     const orgAbbr = this.props.org? this.props.org.abbr : "";
+    const { t } = this.props;
     return (
       <div>
-        <h1>เพิ่มชนิดการใช้รูปแปลง</h1>
+        <h1>{t('addActivityType')}</h1>
         <p>
-          หน่วยงาน: {orgName} ({orgAbbr})
+          {t('agency')}: {orgName} ({orgAbbr})
         </p>
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
           <div>
             <TextField
               id="name"
-              label="ชื่อ"
+              label={t('name')}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -55,7 +57,7 @@ class LandUseTypeAdd extends Component {
           <div>
             <TextField
               id="description"
-              label="คำอธิบาย"
+              label={t('description')}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -66,7 +68,7 @@ class LandUseTypeAdd extends Component {
             />
           </div>
           <Button variant="contained" color="primary" style={{ margin: '1em 0' }} type="submit">
-            เพิ่มชนิดการใช้รูปแปลง
+          {t('newActivityType')}
           </Button>
         </form>
       </div>
@@ -74,4 +76,4 @@ class LandUseTypeAdd extends Component {
   }
 }
 
-export default LandUseTypeAdd;
+export default withTranslation()(LandUseTypeAdd);

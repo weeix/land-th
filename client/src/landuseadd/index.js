@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Button, FormControl, InputLabel, Select, TextField } from "@material-ui/core";
+import { withTranslation } from "react-i18next";
 
 class LandUseAdd extends Component {
   constructor(props) {
@@ -51,35 +52,36 @@ class LandUseAdd extends Component {
   render() {
     const orgName = this.props.org? this.props.org.name : "";
     const orgAbbr = this.props.org? this.props.org.abbr : "";
+    const { t } = this.props;
     return (
       <div>
-        <h1>เพิ่มการใช้รูปแปลง</h1>
+        <h1>{t('newActivity')}</h1>
         <p>
-          หน่วยงาน: {orgName} ({orgAbbr})
+          {t('agency')}: {orgName} ({orgAbbr})
         </p>
         <form noValidate autoComplete="off" onSubmit={this.handleSubmit}>
           <div style={{ margin: '1em 0' }}>
             <TextField
               id="geom-wkt"
-              label="รหัสแปลง"
+              label={t('landId')}
               variant="outlined"
               onChange={this.handleLandIdChange}
               value={this.state.landId}
             />
           </div>
           <FormControl variant="outlined" style={{ minWidth: '180px' }}>
-            <InputLabel htmlFor="land-use-type">ประเภทการใช้</InputLabel>
+            <InputLabel htmlFor="land-use-type">{t('type')}</InputLabel>
             <Select
               native
               onChange={this.handleLandUseTypeChange}
               value={this.state.landUseTypeId}
-              label="ประเภทการใช้"
+              label={t('activityType')}
               inputProps={{
                 name: 'land-use-type',
                 id: 'land-use-type'
               }}
             >
-              <option aria-label="ไม่มี" value="" />
+              <option aria-label={t('none')} value="" />
               {this.props.landUseTypes.map((landUseType) => (
                 <option key={landUseType.id} value={landUseType.id}>{landUseType.name}</option>
               ))}
@@ -88,7 +90,7 @@ class LandUseAdd extends Component {
           <div>
             <TextField
               id="issue-date"
-              label="วันที่เริ่มใช้"
+              label={t('issueDate')}
               type="date"
               InputLabelProps={{
                 shrink: true,
@@ -102,7 +104,7 @@ class LandUseAdd extends Component {
           <div>
             <TextField
               id="expire-date"
-              label="วันที่สิ้นสุดการใช้"
+              label={t('expireDate')}
               type="date"
               InputLabelProps={{
                 shrink: true,
@@ -114,7 +116,7 @@ class LandUseAdd extends Component {
             />
           </div>
           <Button variant="contained" color="primary" style={{ margin: '1em 0' }} type="submit">
-            เพิ่มการใช้รูปแปลง
+            {t('newActivity')}
           </Button>
         </form>
       </div>
@@ -122,4 +124,4 @@ class LandUseAdd extends Component {
   }
 }
 
-export default LandUseAdd;
+export default withTranslation()(LandUseAdd);

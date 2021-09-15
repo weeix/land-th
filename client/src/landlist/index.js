@@ -9,20 +9,22 @@ import {
 } from "@mui/x-data-grid";
 import React, { Component } from "react";
 import { withRouter } from "react-router"
+import { withTranslation } from 'react-i18next';
 
 class LandList extends Component {
 
   constructor(props) {
     super(props);
+    const { t } = props;
     this.state = {
       columns: [
-        { field: 'id', headerName: 'รหัส', type: 'number' },
-        { field: 'type', headerName: 'ประเภท' },
-        { field: 'location', headerName: 'พื้นที่', width: 280 },
-        { field: 'issueDate', headerName: 'วันที่ประกาศ', width: 150 },
+        { field: 'id', headerName: t('id'), type: 'number' },
+        { field: 'type', headerName: t('type') },
+        { field: 'location', headerName: t('location'), width: 280 },
+        { field: 'issueDate', headerName: t('issueDate'), width: 150 },
         {
           field: '',
-          headerName: 'แผนที่',
+          headerName: t('map'),
           width: 80,
           sortable: false,
           disableClickEventBubbling: true,
@@ -46,11 +48,12 @@ class LandList extends Component {
   render() {
     const orgName = this.props.org? this.props.org.name : "";
     const orgAbbr = this.props.org? this.props.org.abbr : "";
+    const { t } = this.props;
     return (
       <div>
-        <h1>รูปแปลงทั้งหมด</h1>
+        <h1>{t('allAllocations')}</h1>
         <p>
-          หน่วยงาน: {orgName} ({orgAbbr})
+          {t('agency')}: {orgName} ({orgAbbr})
         </p>
         <div style={{ height: 500, width: "100%" }}>
           <DataGrid
@@ -72,4 +75,4 @@ class LandList extends Component {
   }
 }
 
-export default withRouter(LandList);
+export default withRouter(withTranslation()(LandList));

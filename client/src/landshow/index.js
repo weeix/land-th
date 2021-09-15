@@ -23,17 +23,19 @@ import {
   TileLayer
 } from "react-leaflet";
 import * as Wkt from "wicket";
+import { withTranslation } from 'react-i18next';
 
 class LandShow extends Component {
 
   constructor(props) {
     super(props);
+    const { t } = props;
     this.state = {
       columns: [
-        { field: 'id', headerName: 'รหัส', type: 'number' },
-        { field: 'type', headerName: 'ประเภท' },
-        { field: 'issueDate', headerName: 'วันที่ประกาศ', width: 150 },
-        { field: 'expireDate', headerName: 'วันที่สิ้นสุด', width: 150 }
+        { field: 'id', headerName: t('id'), type: 'number' },
+        { field: 'type', headerName: t('type') },
+        { field: 'issueDate', headerName: t('issueDate'), width: 150 },
+        { field: 'expireDate', headerName: t('expireDate'), width: 150 }
       ],
       infos: [
         { label: '...', value: '' }
@@ -69,7 +71,7 @@ class LandShow extends Component {
   }
 
   getLandData = async () => {
-    const { match, landTypes } = this.props;
+    const { match, landTypes, t } = this.props;
     const land = await this.props.getSingleLand(match.params.id);
     if (!land) {
       return;
@@ -86,8 +88,8 @@ class LandShow extends Component {
       }
     }
     const infos = [
-      { label: 'วันที่ประกาศ', value: issueDateString },
-      { label: 'ประเภทแปลง', value: landTypeString}
+      { label: t('issueDate'), value: issueDateString },
+      { label: t('landType'), value: landTypeString}
     ]
     const geom = new Wkt.Wkt(land.geom);
     this.setState({ infos, geom: geom.toJson() });
@@ -160,6 +162,7 @@ class LandShow extends Component {
   }
 
   render() {
+    const { t } = this.props;
     const { match } = this.props;
     const landGeom = () => {
       if (this.state.geom) {
@@ -169,10 +172,10 @@ class LandShow extends Component {
     return (
       <React.Fragment>
         <Breadcrumbs aria-label="breadcrumb" className="breadcrumb">
-          <Link color="inherit" href="/">รูปแปลงทั้งหมด</Link>
-          <Typography>รูปแปลงรหัส {match.params.id}</Typography>
+          <Link color="inherit" href="/">{t('allAllocations')}</Link>
+          <Typography>{t('landNo')} {match.params.id}</Typography>
         </Breadcrumbs>
-        <h1>รูปแปลงรหัส {match.params.id}</h1>
+        <h1>{t('landNo')} {match.params.id}</h1>
         <TableContainer component={Paper}>
           <Table>
             <TableBody>
@@ -201,7 +204,7 @@ class LandShow extends Component {
             }}
           </MapConsumer>
         </MapContainer>
-        <h2>การใช้ประโยชน์รูปแปลง</h2>
+        <h2>{t('landActivities')}</h2>
         <div style={{ height: 500, width: "100%" }}>
           <DataGrid
             columns={this.state.columns}
@@ -222,4 +225,4 @@ class LandShow extends Component {
   }
 }
 
-export default withRouter(LandShow);
+export default withRouter(withTranslation()(LandShow));

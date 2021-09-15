@@ -14,6 +14,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
+import { withTranslation } from 'react-i18next';
 import NavBar from "./common/NavBar";
 import LandList from "./landlist";
 import LandAdd from "./landadd";
@@ -210,6 +211,7 @@ class App extends Component {
 
   addLand = async (landTypeId, issueDate, geom) => {
     const { accounts, contract } = this.state;
+    const { t } = this.props;
 
     try {
       this.setState({ loading: true });
@@ -223,8 +225,8 @@ class App extends Component {
           geom
         ).send({ from: accounts[0] });
         swal(
-          'สำเร็จ',
-          'เพิ่มรูปแปลงแล้ว',
+          t('succeed'),
+          t('addedLand'),
           'success'
         );
         return result;
@@ -234,26 +236,26 @@ class App extends Component {
     } catch (error) {
       if (error.message === 'land overlaps with existing lands') {
         swal(
-          'เกิดข้อผิดพลาด',
-          'รูปแปลงที่จะเพิ่มทับซ้อนรูปแปลงเดิม',
+          t('anErrorOccurred'),
+          t('landOverlaps'),
           'error'
         );
       } else if (error.message.search('land type must only be created by officer\'s organization') !== -1) {
         swal(
-          'เกิดข้อผิดพลาด',
-          'ไม่สามารถเลือกชนิดรูปแปลงของหน่วยงานอื่นได้',
+          t('anErrorOccurred'),
+          t('cantUseOtherOrgLandType'),
           'error'
         );
       } else if (error.message.search('User denied transaction') !== -1) {
         swal(
-          'เกิดข้อผิดพลาด',
-          'ผู้ใช้ปฏิเสธการทำธุรกรรม',
+          t('anErrorOccurred'),
+          t('userDeniedTransaction'),
           'error'
         );
       } else {
         swal(
-          'เกิดข้อผิดพลาด',
-          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          t('anErrorOccurred'),
+          t('unknownErrorPleaseInspectConsole'),
           'error'
         );
       }
@@ -265,6 +267,7 @@ class App extends Component {
 
   addLandType = async (name, description) => {
     const { accounts, contract } = this.state;
+    const { t } = this.props;
 
     try {
       this.setState({ loading: true });
@@ -273,28 +276,28 @@ class App extends Component {
         description
       ).send({ from: accounts[0] });
       swal(
-        'สำเร็จ',
-        'เพิ่มชนิดรูปแปลงแล้ว',
+        t('succeed'),
+        t('addedLandType'),
         'success'
       );
       return result;
     } catch (error) {
       if (error.message.search('must not be empty') !== -1) {
         swal(
-          'เกิดข้อผิดพลาด',
-          'โปรดระบุชื่อและคำอธิบายของชนิดรูปแปลง',
+          t('anErrorOccurred'),
+          t('pleaseSpecifyLandTypeNameAndDescription'),
           'error'
         );
       } else if (error.message.search('User denied transaction') !== -1) {
         swal(
-          'เกิดข้อผิดพลาด',
-          'ผู้ใช้ปฏิเสธการทำธุรกรรม',
+          t('anErrorOccurred'),
+          t('userDeniedTransaction'),
           'error'
         );
       } else {
         swal(
-          'เกิดข้อผิดพลาด',
-          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          t('anErrorOccurred'),
+          t('unknownErrorPleaseInspectConsole'),
           'error'
         );
       }
@@ -306,6 +309,7 @@ class App extends Component {
 
   addLandUse = async (landUseTypeId, landId, issueDate, expireDate) => {
     const { accounts, contract } = this.state;
+    const { t } = this.props;
 
     try {
       const result = await contract.methods.addLandUse(
@@ -315,22 +319,22 @@ class App extends Component {
         expireDate
       ).send({ from: accounts[0] });
       swal(
-        'สำเร็จ',
-        'เพิ่มการใช้รูปแปลงแล้ว',
+        t('succeed'),
+        t('addedLandActivity'),
         'success'
       );
       return result;
     } catch (error) {
       if(error.message.search('land use type must only be created by officer\'s organization') !== -1) {
         swal(
-          'เกิดข้อผิดพลาด',
-          'ไม่สามารถเลือกชนิดการใช้รูปแปลงของหน่วยงานอื่นได้',
+          t('anErrorOccurred'),
+          t('cantUseOtherOrgLandActivityType'),
           'error'
         );
       } else {
         swal(
-          'เกิดข้อผิดพลาด',
-          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          t('anErrorOccurred'),
+          t('unknownErrorPleaseInspectConsole'),
           'error'
         );
       }
@@ -340,6 +344,7 @@ class App extends Component {
 
   addLandUseType = async (name, description) => {
     const { accounts, contract } = this.state;
+    const { t } = this.props;
 
     try {
       const result = await contract.methods.addLandUseType(
@@ -347,22 +352,22 @@ class App extends Component {
         description
       ).send({ from: accounts[0] });
       swal(
-        'สำเร็จ',
-        'เพิ่มชนิดการใช้รูปแปลงแล้ว',
+        t('succeed'),
+        t('addedLandActivityType'),
         'success'
       );
       return result;
     } catch (error) {
       if(error.message.search('must not be empty') !== -1) {
         swal(
-          'เกิดข้อผิดพลาด',
-          'โปรดระบุชื่อและคำอธิบายของชนิดการใช้รูปแปลง',
+          t('anErrorOccurred'),
+          t('pleaseSpecifyLandActivityTypeNameAndDescription'),
           'error'
         );
       } else {
         swal(
-          'เกิดข้อผิดพลาด',
-          'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ โปรดดูรายละเอียดใน console',
+          t('anErrorOccurred'),
+          t('unknownErrorPleaseInspectConsole'),
           'error'
         );
       }
@@ -394,6 +399,7 @@ class App extends Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <Router>
         <div className="App">
@@ -401,7 +407,7 @@ class App extends Component {
             <CircularProgress color="inherit" />
           </Backdrop>
           <NavBar
-            displayName={this.state.accounts != null ? this.state.accounts[0] : 'Guest'}
+            displayName={this.state.accounts != null ? this.state.accounts[0] : t('guest')}
           />
           <Container className="container">
             <div className="tool-bar" />
@@ -461,4 +467,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withTranslation()(App);
