@@ -12,7 +12,14 @@
   "cantUseOtherOrgLandActivityType": "ไม่สามารถเลือกชนิดการใช้รูปแปลงของหน่วยงานอื่นได้",
   "addedLandActivityType": "เพิ่มชนิดการใช้รูปแปลงแล้ว",
   "pleaseSpecifyLandActivityTypeNameAndDescription": "โปรดระบุชื่อและคำอธิบายของชนิดการใช้รูปแปลง",
+  "addedOfficer": "เพิ่มเจ้าหน้าที่",
+  "onlyOrgAdminCanAddUsers": "เฉพาะผู้ดูแลระบบของหน่วยงานเท่านั้น",
+  "addressAlreasyUsed": "มีการใช้งานแอดเดรสนี้แล้ว",
+  "addressMustntBeEmpty": "แอดเดรสไม่สามารถเป็นค่าว่าง",
+  "refMustntBeEmpty": "รหัสอ้างอิงไม่สามารถเป็นค่าว่าง",
+  "refHashMustntBeEmpty": "แฮชไม่สามารถเป็นค่าว่าง",
   "guest": "ผู้เยี่ยมชม",
+  "addOfficer": "เพิ่มเจ้าหน้าที่",
   "allAllocations": "รูปแปลงทั้งหมด",
   "newAllocation": "เพิ่มรูปแปลง",
   "addAllocationType": "เพิ่มชนิดรูปแปลง",
@@ -35,5 +42,10 @@
   "newAllocationType": "เพิ่มชนิดรูปแปลง",
   "landId": "รหัสแปลง",
   "activityType": "ประเภทการใช้ประโยชน์รูปแปลง",
-  "newActivityType": "เพิ่มชนิดการใช้ประโยชน์รูปแปลง"
+  "newActivityType": "เพิ่มชนิดการใช้ประโยชน์รูปแปลง",
+  "officerAddress": "แอดเดรสของเจ้าหน้าที่",
+  "officerRef": "รหัสอ้างอิงเจ้าหน้าที่",
+  "officerRefHash": "แฮชรหัสอ้างอิง",
+  "isAdmin": "ให้เป็นผู้ดูแลระบบของหน่วยงาน",
+  "newOfficer": "เพิ่มเจ้าหน้าที่"
 }

@@ -22,6 +22,7 @@ import LandTypeAdd from "./landtypeadd";
 import LandUseAdd from "./landuseadd";
 import LandUseTypeAdd from "./landusetypeadd";
 import LandShow from "./landshow";
+import OfficerAdd from "./officeradd";
 
 class App extends Component {
 
@@ -48,6 +49,7 @@ class App extends Component {
     this.addLandType = this.addLandType.bind(this);
     this.addLandUse = this.addLandUse.bind(this);
     this.addLandUseType = this.addLandUseType.bind(this);
+    this.addOfficer = this.addOfficer.bind(this);
     this.getLands = this.getLands.bind(this);
     this.getSingleLand = this.getSingleLand.bind(this);
   }
@@ -375,6 +377,65 @@ class App extends Component {
     }
   }
 
+  addOfficer = async (address, ref, refhash, isAdmin) => {
+    const { accounts, contract } = this.state;
+    const { t } = this.props;
+
+    try {
+      const result = await contract.methods.addOfficer(
+        address,
+        ref,
+        refhash,
+        isAdmin
+      ).send({ from: accounts[0] });
+      swal(
+        t('succeed'),
+        t('addedOfficer'),
+        'success'
+      );
+      return result;
+    } catch (error) {
+      if (error.message.search('only organizations\' administrator can add users') !== -1) {
+        swal(
+          t('anErrorOccurred'),
+          t('onlyOrgAdminCanAddUsers'),
+          'error'
+        );
+      } else if (error.message.search('address already used') !== -1) {
+        swal(
+          t('anErrorOccurred'),
+          t('addressAlreasyUsed'),
+          'error'
+        );
+      } else if (error.message.search('address must not be empty') !== -1) {
+        swal(
+          t('anErrorOccurred'),
+          t('addressMustntBeEmpty'),
+          'error'
+        );
+      } else if (error.message.search('ref must not be empty') !== -1) {
+        swal(
+          t('anErrorOccurred'),
+          t('refMustntBeEmpty'),
+          'error'
+        );
+      } else if (error.message.search('refHash must not be empty') !== -1) {
+        swal(
+          t('anErrorOccurred'),
+          t('refHashMustntBeEmpty'),
+          'error'
+        );
+      } else {
+        swal(
+          t('anErrorOccurred'),
+          t('unknownErrorPleaseInspectConsole'),
+          'error'
+        );
+      }
+      console.error(error);
+    }
+  }
+
   handleBlockchainEvent = async (e) => {
     console.log(e);
     if (e.event === 'LandTypeCreated') {
@@ -408,11 +469,18 @@ class App extends Component {
           </Backdrop>
           <NavBar
             displayName={this.state.accounts != null ? this.state.accounts[0] : t('guest')}
+            officer={this.state.officer}
           />
           <Container className="container">
             <div className="tool-bar" />
             <main>
               <Switch>
+                <Route path="/addofficer">
+                  <OfficerAdd
+                    org={this.state.org}
+                    addOfficer={this.addOfficer}
+                  />
+                </Route>
                 <Route path="/addlandusetype">
                   <LandUseTypeAdd
                     org={this.state.org}

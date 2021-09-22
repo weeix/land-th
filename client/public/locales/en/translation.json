@@ -12,7 +12,14 @@
   "cantUseOtherOrgLandActivityType": "Can't use land activity type of another agency.",
   "addedLandActivityType": "Added land activity type.",
   "pleaseSpecifyLandActivityTypeNameAndDescription": "Please specify name and description of the land activity type.",
+  "addedOfficer": "Added officer.",
+  "onlyOrgAdminCanAddUsers": "Only organizations' admins can add users.",
+  "addressAlreasyUsed": "Address already used.",
+  "addressMustntBeEmpty": "Address must not be empty",
+  "refMustntBeEmpty": "Reference code must not be empty",
+  "refHashMustntBeEmpty": "Reference hash must not be empty",
   "guest": "Guest",
+  "addOfficer": "Add officer",
   "allAllocations": "All state land allocations",
   "newAllocation": "New state land allocation",
   "addAllocationType": "Add state land allocation type",
@@ -35,5 +42,10 @@
   "newAllocationType": "New state land allocation type",
   "landId": "Land ID",
   "activityType": "Activity type",
-  "newActivityType": "New activity type"
+  "newActivityType": "New activity type",
+  "officerAddress": "Officer's Address",
+  "officerRef": "Officer's Reference Code",
+  "officerRefHash": "Officer's Reference Hash",
+  "isAdmin": "Is organization's admin",
+  "newOfficer": "New officer"
 }

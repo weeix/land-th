@@ -22,6 +22,7 @@ import {
   ExpandMore,
   List as ListIcon,
   Menu as MenuIcon,
+  PersonAdd,
   PlaylistAdd as PlaylistAddIcon,
   Translate
 } from '@material-ui/icons'
@@ -97,7 +98,23 @@ class NavBar extends Component {
   }
 
   render() {
-    const { t } = this.props;
+    const { t, officer } = this.props;
+
+    let menuForAdmin = null;
+    if (officer && officer.orgAdmin) {
+      menuForAdmin = (
+        <React.Fragment>
+          <Divider />
+          <ListItem button component={RouterLink} to="/addofficer">
+            <ListItemIcon>
+              <PersonAdd />
+            </ListItemIcon>
+            <ListItemText primary={t('addOfficer')} />
+          </ListItem>
+        </React.Fragment>
+      )
+    }
+
     const menu = (
       <nav>
         <List>
@@ -132,6 +149,7 @@ class NavBar extends Component {
             </ListItemIcon>
             <ListItemText primary={t('addActivityType')} />
           </ListItem>
+          {menuForAdmin}
         </List>
       </nav>
     )
