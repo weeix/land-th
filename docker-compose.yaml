@@ -20,19 +20,62 @@ services:
     command: ["node", "./src/listener.js"]
     env_file:
       - ./config/db.env
-  blockchain:
-    image: trufflesuite/ganache-cli:latest
+  blockchain-boot:
+    image: blockchain-boot
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+      args:
+        - ACCOUNT_PASSWORD=${BLOCKCHAIN_BOOTNODE_PASSWORD}
     ports:
-      - "8545:8545"
-    volumes:
-      - blockchaindata:/ganache_data
+      - "30303:30303"
     command:
-      - "--deterministic"
-      - "--mnemonic"
-      - "mind gesture pizza when gloom spoil invest alpha common switch apple autumn"
-      - "--db=/ganache_data"
-      - "--networkId"
-      - "5777"
+      - "--nodekeyhex=${BLOCKCHAIN_BOOTNODE_NODEKEYHEX}"
+      - "--nodiscover"
+      - "--ipcdisable"
+      - "--networkid=${NETWORK_ID}"
+  blockchain-signer:
+    image: blockchain-signer
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+      args:
+        - ACCOUNT_PASSWORD=${BLOCKCHAIN_SIGNER_PASSWORD}
+        - PRIVATE_KEY=${BLOCKCHAIN_SIGNER_PRIVKEY}
+    depends_on:
+      - blockchain-boot
+    command:
+      - "--bootnodes"
+      - "enode://${BLOCKCHAIN_BOOTNODE_NODEKEY}@blockchain-boot:30303"
+      - "--mine"
+      - "--unlock"
+      - "${BLOCKCHAIN_SIGNER_ACCOUNT}"
+      - "--password"
+      - "${BLOCKCHAIN_SIGNER_PASSWORD}"
+      - "--networkid=${NETWORK_ID}"
+  blockchain-rpc:
+    image: blockchain-rpc
+    build:
+      context: ./blockchain
+      dockerfile: ./Dockerfile
+      args:
+        - ACCOUNT_PASSWORD=${BLOCKCHAIN_RPC_PASSWORD}
+    depends_on:
+      - blockchain-boot
+    ports:
+      - "30303:30303"
+    volumes:
+      - blockchaindata:/root/.ethereum
+    command:
+      - "--bootnodes"
+      - "enode://${BLOCKCHAIN_BOOTNODE_NODEKEY}@blockchain-boot:30303"
+      - "--ws"
+      - "--ws.addr"
+      - "0.0.0.0"
+      - "--ws.port"
+      - "8545"
+      - "--allow-insecure-unlock"
+      - "--networkid=${NETWORK_ID}"
   db:
     image: postgis/postgis:latest
     ports:
