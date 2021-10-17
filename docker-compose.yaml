@@ -1,5 +1,6 @@
 ---
 version: "3"
+
 services:
   server:
     build:
@@ -11,6 +12,8 @@ services:
       - "5000:5000"
     env_file:
       - ./config/db.env
+    networks:
+      land-th:
   listener:
     build:
       context: ./server
@@ -20,6 +23,8 @@ services:
     command: ["node", "./src/listener.js"]
     env_file:
       - ./config/db.env
+    networks:
+      land-th:
   blockchain-boot:
     image: blockchain-boot
     build:
@@ -32,6 +37,10 @@ services:
     command:
       - "--nodekeyhex=${BLOCKCHAIN_BOOTNODE_NODEKEYHEX}"
       - "--networkid=${NETWORK_ID}"
+      - "--netrestrict"
+      - "172.24.48.0/24"
+    networks:
+      land-th:
   blockchain-signer:
     image: blockchain-signer
     build:
@@ -52,6 +61,10 @@ services:
       - "--password"
       - "/root/.ethereum/geth/password"
       - "--networkid=${NETWORK_ID}"
+      - "--netrestrict"
+      - "172.24.48.0/24"
+    networks:
+      land-th:
   blockchain-rpc:
     image: blockchain-rpc
     build:
@@ -77,6 +90,10 @@ services:
       - "0.0.0.0"
       - "--allow-insecure-unlock"
       - "--networkid=${NETWORK_ID}"
+      - "--netrestrict"
+      - "172.24.48.0/24"
+    networks:
+      land-th:
   db:
     image: postgis/postgis:latest
     ports:
@@ -86,6 +103,16 @@ services:
       # - ./db_init:/docker-entrypoint-initdb.d
     env_file:
       - ./config/db.env
+    networks:
+      land-th:
+
 volumes:
   blockchaindata:
   worldstate:
+
+networks:
+  land-th:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: 172.24.48.0/24
