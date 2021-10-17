@@ -62,12 +62,16 @@ services:
     depends_on:
       - blockchain-boot
     ports:
-      - "30303:30303"
+      - "8545:8545"
+      - "8546:8546"
     volumes:
       - blockchaindata:/root/.ethereum
     command:
       - "--bootnodes"
       - "enode://${BLOCKCHAIN_BOOTNODE_NODEKEY}@blockchain-boot:30303"
+      - "--http"
+      - "--http.addr"
+      - "0.0.0.0"
       - "--ws"
       - "--ws.addr"
       - "0.0.0.0"
