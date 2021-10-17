@@ -39,6 +39,7 @@ services:
       dockerfile: ./Dockerfile
       args:
         - ACCOUNT_PASSWORD=${BLOCKCHAIN_SIGNER_PASSWORD}
+        - KEEP_PASSWORD=true
         - PRIVATE_KEY=${BLOCKCHAIN_SIGNER_PRIVKEY}
     depends_on:
       - blockchain-boot
@@ -49,7 +50,7 @@ services:
       - "--unlock"
       - "${BLOCKCHAIN_SIGNER_ACCOUNT}"
       - "--password"
-      - "${BLOCKCHAIN_SIGNER_PASSWORD}"
+      - "/root/.ethereum/geth/password"
       - "--networkid=${NETWORK_ID}"
   blockchain-rpc:
     image: blockchain-rpc
