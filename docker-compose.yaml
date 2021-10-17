@@ -31,8 +31,6 @@ services:
       - "30303:30303"
     command:
       - "--nodekeyhex=${BLOCKCHAIN_BOOTNODE_NODEKEYHEX}"
-      - "--nodiscover"
-      - "--ipcdisable"
       - "--networkid=${NETWORK_ID}"
   blockchain-signer:
     image: blockchain-signer
