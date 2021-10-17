@@ -9,9 +9,17 @@
 1. [ติดตั้ง git-lfs][1]
 1. `git lfs install`
 1. `git lfs pull`
-1. สร้างไฟล์ `.env.local` ให้มีเนื้อหาดังนี้ (หากใช้ Docker ToolBox ให้เปลี่ยนจาก localhost เป็นไอพีของ vm):
+1. สร้างไฟล์ `.env` ให้มีเนื้อหาดังนี้ (หากใช้ Docker ToolBox ให้เปลี่ยนจาก localhost เป็นไอพีของ vm):
 
     ```
+    NETWORK_ID=5777
+    BLOCKCHAIN_BOOTNODE_NODEKEYHEX=<BOOTNODE_NODEKEYHEX>
+    BLOCKCHAIN_BOOTNODE_NODEKEY=<BOOTNODE_NODEKEY>
+    BLOCKCHAIN_BOOTNODE_PASSWORD=yourpassword
+    BLOCKCHAIN_SIGNER_PASSWORD=yourpassword
+    BLOCKCHAIN_RPC_PASSWORD=yourpassword
+    BLOCKCHAIN_SIGNER_ACCOUNT=<SIGNER_ACCOUNT>
+    BLOCKCHAIN_SIGNER_PRIVKEY=<SIGNER_PRIVKEY>
     BLOCKCHAIN_HOST=localhost
     ```
 
