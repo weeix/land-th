@@ -4,7 +4,7 @@ const sequelize = require('./sequelize');
 
 const { initData } = require('./initdata');
 
-const PROVIDER_URL = 'ws://blockchain:8545';
+const PROVIDER_URL = 'ws://blockchain-rpc:8546';
 const RETRY_TIMEOUT = 10000;
 const SYNC_LIMIT = 10000;
 const CONTRACT_FILE_PATH = __dirname + '/contracts/LandTH.json';
