@@ -23,6 +23,8 @@ services:
     command: ["node", "./src/listener.js"]
     env_file:
       - ./config/db.env
+    environment:
+      - RPC_URL=ws://blockchain-rpc:8546
     networks:
       land-th:
   blockchain-boot:
