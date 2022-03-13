@@ -2,12 +2,12 @@ FROM ethereum/client-go:latest
 
 ARG ACCOUNT_PASSWORD
 ARG PRIVATE_KEY
-ARG KEEP_PASSWORD
+ARG KEEP_PASSWORD=false
 
 COPY genesis.json /tmp
 
 RUN geth init /tmp/genesis.json \
-    && rm -f ~/.ethereum/geth/nodekey \
+    # && rm -f ~/.ethereum/geth/nodekey \
     && echo ${ACCOUNT_PASSWORD} > /tmp/password \
     && if [ -z ${PRIVATE_KEY} ]; \
     then geth account new --password /tmp/password; \
